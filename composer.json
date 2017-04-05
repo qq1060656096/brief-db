@@ -1,0 +1,30 @@
+{
+  "name": "wei/doctrine-model",
+  "type": "library",
+  "description": "base library for PHP",
+  "keywords": ["doctrine-model"],
+  "license": "BSD",
+  "authors": [
+    {
+      "name": "Zhao Wei Jie",
+      "email": "1060656096@qq.com",
+      "role": "Founder and project lead"
+    }
+  ],
+  "autoload": {
+    "psr-4":{
+      "Wei\\Base\\":"lib/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Wei\\Base\\Tests\\": "tests"
+    }
+  },
+  "require": {
+    "doctrine/dbal": "v2.5.4"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^5.4"
+  }
+}
