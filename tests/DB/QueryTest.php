@@ -6,6 +6,17 @@ use Wei\Base\Tests\WeiTestCase;
 
 class QueryTest extends WeiTestCase
 {
+    public function setUp()
+    {
+        $query = new Query();
+        $query->from('test');
+        $query->insert([
+            'name' => '20170406--0016',
+            'age' => 20,
+            'uid' => '2017040601--0016'
+        ]);
+    }
+
     /**
      * 测试查询字段[select]
      */
@@ -55,16 +66,16 @@ class QueryTest extends WeiTestCase
     {
         $query = new Query();
         $query->where('id=1 and name=2');
-        $this->assertEquals('where id=1 and name=2', $query->getWhere());
+        $this->assertEquals(' where id=1 and name=2', $query->getWhere());
 
         $query->andWhere(['uid' => 3]);
-        $this->assertEquals("where id=1 and name=2 and uid = '3'", $query->getWhere());
+        $this->assertEquals(" where id=1 and name=2 and uid = '3'", $query->getWhere());
 
         $query->andWhere("tid=4");
-        $this->assertEquals("where id=1 and name=2 and uid = '3' and tid=4", $query->getWhere());
+        $this->assertEquals(" where id=1 and name=2 and uid = '3' and tid=4", $query->getWhere());
 
         $query->orWhere("name like 't%'");
-        $this->assertEquals("where id=1 and name=2 and uid = '3' and tid=4 or name like 't%'", $query->getWhere());
+        $this->assertEquals(" where id=1 and name=2 and uid = '3' and tid=4 or name like 't%'", $query->getWhere());
         $where = [
             'name' => [
                 'op' => 'like',
@@ -72,7 +83,7 @@ class QueryTest extends WeiTestCase
             ]
         ];
         $query->orWhere($where);
-        $this->assertEquals("where id=1 and name=2 and uid = '3' and tid=4 or name like 't%' or name like 'test%'", $query->getWhere());
+        $this->assertEquals(" where id=1 and name=2 and uid = '3' and tid=4 or name like 't%' or name like 'test%'", $query->getWhere());
 
         $where = [
             'id' => 3,
@@ -98,7 +109,7 @@ class QueryTest extends WeiTestCase
             ]
         ];
         $query->where($where);
-        $this->assertEquals("where id = '3' and name in ('test1','test2') or age >= '5' or `age` <= 10 or tid <= 11", $query->getWhere());
+        $this->assertEquals(" where id = '3' and name in ('test1','test2') or age >= '5' or `age` <= 10 or tid <= 11", $query->getWhere());
 //        var_dump($query->where);
     }
 
@@ -244,6 +255,18 @@ class QueryTest extends WeiTestCase
         $query->addGroupBy(['name','age']);
         $query->orderBy(['id'=>'desc','age asc']);
         $this->assertEquals('select min(id) from test group by name,age order by id desc,age asc', $query->getColumnRawSqlPart('min(id)'));
+
+        $query = new Query();
+        $query->from('test');
+        $query->where(['`name`' => '20170406--0016']);
+        $query->orderBy(['id' => 'asc']);
+        $query->enabledSqlLog();
+        $result = $query->min('id');
+        $debugSql = $query->getLastRawSql();
+
+        $row = $query->one();
+        $this->assertEquals("select min(id) from test where `name` = '20170406--0016' order by id asc", $debugSql['rawSql']);
+        $this->assertEquals($row['id'], $result);
     }
 
     public function testMax()

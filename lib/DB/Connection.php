@@ -34,14 +34,14 @@ class Connection
                     'user' => 'root',
                     'password' => 'root',
                     'host' => 'localhost',
-                    'dbname' => 'test'
+                    'dbname' => 'demo'
                 ),
                 'slaves' => array(
                     array(
                         'user' => 'root',
                         'password'=>'root',
                         'host' => 'localhost',
-                        'dbname' => 'test'
+                        'dbname' => 'demo'
                     ),
                 ),
                 'keepSlave'=>true,//注意保持从数据库连接

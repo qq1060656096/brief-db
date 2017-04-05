@@ -361,7 +361,7 @@ class Query
      */
     public function getWhere()
     {
-        $strWhere = $this->where ? 'where '.$this->where : '';
+        $strWhere = $this->where ? ' where '.$this->where : '';
         return $strWhere;
     }
 
