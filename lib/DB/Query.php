@@ -1,41 +1,119 @@
 <?php
-namespace Wei\DoctrineModel;
+namespace Wei\Base\DB;
 
-use Wei\Base\BaseException;
+use Wei\Base\Connection;
+use Wei\Base\Exception\BaseException;
 
 class Query
 {
+
+
     /**
      * and条件
+     *
+     * @var string
      */
-    const ON_AND = 'and';
+    const WHERE_AND = 'and';
 
     /**
      * or条件
+     * @var string
      */
-    const ON_OR = 'or';
-
-
+    const WHERE_OR = 'or';
 
     /**
-     * @var null|string 查询字段
+     * 右连接
+     * @var string
+     */
+    const LEFT_JOIN = 'left join';
+
+    /**
+     * 内连接
+     * @var string
+     */
+    const INNER_JOIN = 'inner join';
+    /**
+     * 左连接
+     * @var string
+     */
+    const RIGHT_JOIN = 'right join';
+
+    /**
+     * 查询字段
+     *
+     * @var null|array
      */
     public $select = null;
 
     /**
-     * @var null|string 表名
+     * 表名
+     *
+     * @var null|string
      */
     public $from = null;
+
     /**
-     * @var null|string where条件
+     * 关联查询
+     *
+     * @var null: array
+     */
+    public $join = null;
+
+    /**
+     * where条件
+     *
+     * @var null|string
      */
     public $where = null;
 
     /**
-     * @var \Doctrine\DBAL\Logging\DebugStack SQL日志
+     * 查询分组
+     *
+     * @var null|array
      */
-    protected $logger = null;
+    public $groupBy = null;
 
+    /**
+     * 排序
+     * @var null|string
+     */
+    public $orderBy = null;
+
+
+    /**
+     * 返回记录条数
+     *
+     * @var integer
+     */
+    public $limit = null;
+    /**
+     * 从那条记录还是查询
+     * @var integer
+     */
+    public $offset = null;
+
+    /**
+     * SQL日志
+     *
+     * @var \Doctrine\DBAL\Logging\DebugStack
+     */
+    public $logger = null;
+
+    public function __construct()
+    {
+        $this->DB = Connection::getInstance();
+    }
+
+    /**
+     * 获取DB
+     *
+     * @param \Doctrine\DBAL\Connection|null $db
+     * @return \Doctrine\DBAL\Connection
+     */
+    public function getDB($db = null)
+    {
+        return $db ? $db:$this->DB;
+    }
     /**
      * 开启sql日志
      *
@@ -88,6 +166,27 @@ class Query
     }
 
     /**
+     * 获取查询字段
+     *
+     * @return string 字段信息
+     */
+    public function getSelect()
+    {
+        $str = '';
+        switch (true) {
+            case is_array($this->select):
+                $str = implode(',', $this->select);
+                break;
+            case is_string($this->select):
+                $str = $this->select;
+                break;
+            default:
+                $str = '*';
+                break;
+        }
+        return $str;
+    }
+    /**
      * 设置查询[select]字段
      *
      * @param string|array $fields
@@ -125,6 +224,7 @@ class Query
     {
         switch (true) {
             case is_array($fields):
+                $fields = array_values($fields);
                 break;
             case is_string($fields):
                 $arr = preg_split('/\s*,\s*/', trim($fields), -1, PREG_SPLIT_NO_EMPTY);
@@ -139,18 +239,130 @@ class Query
 
     /**
      * 设置查询表名
-     * @param string $tableName
+     * @param string $table
      * @return $this 失败抛出异常
      * @throws BaseException 异常
      */
-    public function from($tableName)
+    public function from($table)
     {
-        $tableName = trim($tableName);
-        if (empty($tableName) || !is_string($tableName)) {
+        $table = trim($table);
+        if (empty($table) || !is_string($table)) {
             throw new BaseException('', BaseException::TABLE_NAME_NOT_NULL);
         }
-        $this->from = $tableName;
+        $this->from = $table;
         return $this;
+    }
+
+    /**
+     * 获取表名
+     *
+     * @return string 成功表名,否则失败
+     * @throws BaseException 抛出异常
+     */
+    public function getFrom()
+    {
+        $table      = $this->from;
+        if (empty($table)) {
+            throw new BaseException('', BaseException::TABLE_NAME_NOT_NULL);
+        }
+        return $table;
+    }
+    /**
+     * 添加关联查询
+     *
+     * @param string $type 关联类型
+     * @see Query::RIGHT_JOIN
+     * @see Query::LEFT_JOIN
+     * @param string $table 表名
+     * @param string $on 关联字段
+     * @return $this
+     */
+    public function join($type, $table, $on = '')
+    {
+        $this->join[] = [$type, $table, $on];
+        return $this;
+    }
+
+    /**
+     * 获取关联[join]
+     *
+     * @return string
+     */
+    public function getJoin()
+    {
+        $str = '';
+        switch (true) {
+            case is_array($this->join):
+                $joinArr = [];
+                foreach ($this->join as $key => $row)
+                {
+                    if (is_array($row) && count($row) == 3) {
+                        list($type, $table, $on) = $row;
+                        $joinArr[] = $on ? "$type $table on {$on}" : "$type $table";
+                    } elseif (is_string($row)) {
+                        $joinArr[] = $row;
+                    }
+                }
+                $str = implode(" ", $joinArr);
+                break;
+            case is_string($this->join):
+                $str = $this->join;
+                break;
+            default:
+                break;
+        }
+        $str ? $str = " {$str}" : null;
+        return $str;
+    }
+
+    /**
+     * 添加内关联查询
+     *
+     * @param string $table 表名
+     * @param string $on 关联字段
+     * @return $this
+     */
+    public function innerJoin($table, $on = '')
+    {
+        $this->join(self::INNER_JOIN, $table, $on);
+        return $this;
+    }
+
+    /**
+     * 添加左关联查询
+     *
+     * @param string $table 表名
+     * @param string $on 关联字段
+     * @return $this
+     */
+    public function leftJoin($table, $on = '')
+    {
+        $this->join(self::LEFT_JOIN, $table, $on);
+        return $this;
+    }
+
+    /**
+     * 添加右关联查询
+     *
+     * @param string $table 表名
+     * @param string $on 关联字段
+     * @return $this
+     */
+    public function rightJoin($table, $on = '')
+    {
+        $this->join(self::RIGHT_JOIN, $table, $on);
+        return $this;
+    }
+
+    /**
+     * 获取where条件
+     *
+     * @return null|string
+     */
+    public function getWhere()
+    {
+        $strWhere = $this->where ? 'where '.$this->where : '';
+        return $strWhere;
     }
 
     /**
@@ -203,7 +415,7 @@ class Query
      * @return string 成功返回字符串
      * @throws BaseException 失败抛出异常
      */
-    protected function parseWhere($where)
+    public function parseWhere($where)
     {
         if ($where === null || $where === "" || $where === []) {
             return '';
@@ -214,67 +426,449 @@ class Query
                 break;
             case is_array($where):
                 $whereStr = '';
+                $tmpArr = [];
                 foreach ($where as $key => $row) {
+                    $on = isset($row['on']) && strtolower($row['on'])==self::WHERE_OR ? self::WHERE_OR: self::WHERE_AND;
+                    $op = isset($row['op']) && $row['op'] ? $row['op']: '=';
+                    if (is_array($row)) {
+                        unset($row['op'], $row['on']);
+                    }
                     $rowLen = is_array($row) ? count($row):0;
-                    $on     = isset($row['on']) && $row['on']==self::ON_OR ? self::ON_OR: self::ON_AND;
-                    $op     = isset($row['op']) && $row['op'] ? $row['op']: '=';
-                    $value  = null;
+                    //是否设置过value值
+                    $is_set_value = true;
                     switch (true) {
-                        case $rowLen > 0:
-                            $value  = isset($row['rawValue']) ? $row['rawValue']: null;
+                        case isset($row['rawValue']):
+                            $value = $row['rawValue'];
                             break;
-                        case is_string($row) || is_numeric($row):
+                        case isset($row['value']):
+                            $value = $row['value'];
+                            break;
+                        case $rowLen == 1:
+                            $value = array_shift($row);
+                            break;
+                        case is_numeric($row) || is_string($row):
                             $value = $row;
                             break;
+                        default:
+                            $is_set_value = false;
+                            break;
                     }
-                    if ($value === null) {
+                    if ($is_set_value === false) {
                         continue;
                     }
-                    $value      = isset($row['rawValue']) ? $value : '\''.addslashes($value).'\'';
-                    $tmpWhere   = implode(" ", [$key, $op, $value]);
-                    $whereStr   .= empty($whereArr) ? $tmpWhere : " $on ".$tmpWhere;
+                    $value = isset($row['rawValue']) ? $row['rawValue'] : '\''.addslashes($value).'\'';
+                    $tmp = implode(" ", [$key, $op, $value]);
+                    $whereStr .= empty($whereStr) ? $tmp : " $on ".$tmp;
                 }
                 return $whereStr;
                 break;
             default:
-                throw new BaseException('', BaseException::WHERE_NOT_PARSE);
+                throw new BaseException(BaseException::WHERE_NOT_PARSE);
                 break;
         }
     }
 
-    public function findOne()
-    {
-        $fieldStr = $this->select ? implode(',', $this->select) : '*';
-        $sql = "select $fieldStr"
-    }
+
+
     /**
-     * 根据sql查询数据(返回一行记录)
+     * 解析SQL分组查询[group by]
      *
-     *
-     * @param string $sql 原始sql
-     * @param array $params 参数
-     * @param array $types 参数类型
-     *
-     * @see \Doctrine\DBAL\Connection::fetchAssoc()
-     * @return mixed|array
+     * @param string|array $groupBy 分组查询
+     * @return arrray 成功数组,失败抛出异常
+     * @throws BaseException 抛出异常
      */
-    public function findOneBySql($sql, array $params = array(), array $types = array())
+    public function parseGoupBy($groupBy)
     {
-        return $this->DB->fetchAssoc($sql, $params, $types);
+       switch (true) {
+           case is_array($groupBy):
+               foreach ($groupBy as $key => $row) {
+                   $arr[] = is_array($row) ? $this->parseGoupBy($row): "$row";
+               }
+               break;
+           case is_string($groupBy):
+           case is_numeric($groupBy):
+                $arr = preg_split('/\s*,\s*/', trim($groupBy), -1, PREG_SPLIT_NO_EMPTY);
+                break;
+           default:
+               throw new BaseException('', BaseException::GROUP_BY_NOT_PARSE);//解析失败
+               break;
+       }
+       return $arr;
     }
 
     /**
-     * 根据sql查询数据(返回多行行记录)
+     * 获取分组查询
      *
-     * @param string $sql 原始sql
-     * @param array $params 参数
-     * @param array $types 参数类型
-     *
-     * @see \Doctrine\DBAL\Connection::fetchAll()
-     * @return mixed|array
+     * @return string
      */
-    public function findAllBySql($sql, array $params = array(), array $types = array())
+    public function getGroupBy()
     {
-        return $this->DB->fetchAll($sql, $params, $types);
+        $str = '';
+        switch (true) {
+            case is_array($this->groupBy):
+                $tmpArr = [];
+                foreach ($this->groupBy as $key => $row)
+                {
+                    $tmpArr[] = $row;
+                }
+                $str = implode(",", $tmpArr);
+                break;
+            case is_string($this->groupBy):
+                $str = $this->groupBy;
+                break;
+            default:
+                break;
+        }
+        $str ? $str = " group by {$str}" : null;
+        return $str;
+    }
+
+    /**
+     * 设置SQL分组查询[group by]
+     *
+     * @param string|array $groupBy 分组查询
+     * @return $this 失败抛出异常
+     * @throws BaseException
+     */
+    public function groupBy($groupBy)
+    {
+        $this->groupBy = $this->parseGoupBy($groupBy);
+        return $this;
+    }
+
+    /**
+     * 添加SQL分组查询
+     *
+     * @param string|array $groupBy 分组查询
+     * @return $this 失败抛出异常
+     * @throws BaseException 异常
+     */
+    public function addGroupBy($groupBy)
+    {
+        $arr = $this->parseGoupBy($groupBy);
+        if ($arr) {
+            $this->groupBy = $this->groupBy ? array_merge($this->groupBy, $arr) : $arr;
+        }
+        return $this;
+    }
+
+    /**
+     * 解析SQL排序[order by]
+     *
+     * @param string|array $groupBy 排序
+     * @return arrray 成功数组,失败抛出异常
+     * @throws BaseException 抛出异常
+     */
+    public function parseOrderBy($orderBy)
+    {
+        switch (true) {
+            case is_array($orderBy):
+                foreach ($orderBy as $key => $row) {
+                    if(is_array($row)){
+                        $arr[] = is_array($row) ? $this->parseOrderBy($row) : null;
+                    } elseif (is_string($key)) {
+                        $arr[] = "{$key} $row";
+                    } else {
+                        $arr[] = "$row";
+                    }
+                }
+                break;
+            case is_string($orderBy):
+            case is_numeric($orderBy):
+                $arr = preg_split('/\s*,\s*/', trim($orderBy), -1, PREG_SPLIT_NO_EMPTY);
+                break;
+            default:
+                throw new BaseException('', BaseException::ORDER_BY_NOT_PARSE);//解析失败
+                break;
+        }
+        return $arr;
+    }
+
+    /**
+     * 获取排序
+     *
+     * @return string
+     */
+    public function getOrderBy()
+    {
+        $str = '';
+        switch (true) {
+            case is_array($this->orderBy):
+                $tmpArr = [];
+                foreach ($this->orderBy as $key => $row)
+                {
+                    $tmpArr[] = $row;
+                }
+                $str = implode(",", $tmpArr);
+                break;
+            case is_string($this->orderBy):
+                $str = $this->orderBy;
+                break;
+            default:
+                break;
+        }
+        $str ? $str = " order by {$str}" : null;
+        return $str;
+    }
+
+    /**
+     * 设置SQL排序[order by]
+     *
+     * @param string|array $groupBy 分组查询
+     * @return $this 失败抛出异常
+     * @throws BaseException
+     */
+    public function orderBy($orderBy)
+    {
+        $this->orderBy = $this->parseOrderBy($orderBy);
+        return $this;
+    }
+
+    /**
+     * 添加SQL分组查询
+     *
+     * @param string|array $groupBy 分组查询
+     * @return $this 失败抛出异常
+     * @throws BaseException 异常
+     */
+    public function addOrderBy($orderBy)
+    {
+        $arr = $this->parseOrderBy($orderBy);
+        if ($arr) {
+            foreach ($arr as $key => $row) {
+                $this->orderBy[] = $row;
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * 设置偏移
+     *
+     * @param integer $offset 偏移,从0条开始
+     * @return $this
+     */
+    public function offset($offset)
+    {
+
+        $this->offset = max(0, intval($offset));
+        return $this;
+    }
+
+    /**
+     * 设置显示条数
+     *
+     * @param integer $limit
+     * @return $this
+     */
+    public function limit($limit)
+    {
+        $this->limit = max(0, intval($limit));
+        return $this;
+    }
+    /**
+     * 获取查询部分sql
+     *
+     *
+     * @return string
+     * @throws BaseException
+     */
+    public function getSelectRawSqlPart()
+    {
+        $strFields  = $this->getSelect();
+        $table      = $this->getFrom();
+        $strWhere   = $this->getWhere();
+        $strJoin    = $this->getJoin();
+        $strGroupBy = $this->getGroupBy();
+        $strOrderBy = $this->getOrderBy();
+        $sql = "select {$strFields} from {$table}{$strWhere}{$strGroupBy}{$strOrderBy}";
+        return $sql;
+    }
+
+    /**
+     * 获取单行单列列sql[]
+     * @param string $field 字段名
+     * @return string 成功string,否则失败
+     * @throws BaseException 抛出异常
+     */
+    public function getColumnRawSqlPart($field)
+    {
+        $strFields  = "$field";
+        $table      = $this->getFrom();
+        $strWhere   = $this->getWhere();
+        $strJoin    = $this->getJoin();
+        $strGroupBy = $this->getGroupBy();
+        $strOrderBy = $this->getOrderBy();
+        $sql = "select {$strFields} from {$table}{$strWhere}{$strGroupBy}{$strOrderBy}";
+        return $sql;
+    }
+
+    /**
+     * 获取SQL limit部分
+     *
+     * @return string
+     */
+    public function getSelectRawLimitPart()
+    {
+        $strLimit = '';
+        switch (true) {
+            case $this->offset && $this->limit:
+                $strLimit = "limit {$this->offset},{$this->limit}";
+                break;
+            case $this->limit:
+                $strLimit = "limit {$this->limit}";
+                break;
+        }
+        return $strLimit;
+    }
+
+    /**
+     * 返回单行记录
+     *
+     * @param \Doctrine\DBAL\Connection $db 数据库连接
+     * @return array|mixed
+     */
+    public function one($db = null)
+    {
+        $sql = $this->getSelectRawSqlPart()." limit 1";
+        return $this->getDB($db)->fetchAssoc($sql);
+    }
+
+    /**
+     * 返回多行记录
+     *
+     * @param \Doctrine\DBAL\Connection $db 数据库连接
+     * @return array|mixed
+     */
+    public function all($db = null)
+    {
+        $sql = $this->getSelectRawSqlPart().$this->getSelectRawLimitPart();
+        return $this->getDB($db)->fetchAll($sql);
+    }
+
+    /**
+     * 获取最大值
+     *
+     * @param string $field 字段名
+     * @param \Doctrine\DBAL\Connection $db 数据库连接
+     * @return mixed
+     */
+    public function max($field, $db = null)
+    {
+        $sql = $this->getColumnRawSqlPart("max({$field})");
+        return $this->getDB($db)->fetchColumn($sql);
+    }
+
+    /**
+     * 获取最小值
+     *
+     * @param string $field 字段名
+     * @param \Doctrine\DBAL\Connection $db 数据库连接
+     * @return mixed
+     */
+    public function min($field, $db = null)
+    {
+        $sql = $this->getColumnRawSqlPart("min({$field})");
+        return $this->getDB($db)->fetchColumn($sql);
+    }
+
+    /**
+     * 获取平均值
+     *
+     * @param string $field 字段名
+     * @param \Doctrine\DBAL\Connection $db 数据库连接
+     * @return mixed
+     */
+    public function average($field, $db = null)
+    {
+        $sql = $this->getColumnRawSqlPart("avg({$field})");
+        return $this->getDB($db)->fetchColumn($sql);
+    }
+
+    /**
+     * 获取总条数
+     *
+     * @param string $field 字段名,默认空
+     * @param \Doctrine\DBAL\Connection $db 数据库连接
+     * @return mixed
+     */
+    public function count($field = '', $db = null)
+    {
+        $field && is_string($field) ? null : $field = '*';
+        $sql = $this->getColumnRawSqlPart("count({$field})");
+        return $this->getDB($db)->fetchColumn($sql);
+    }
+
+    /**
+     * 插入数据
+     *
+     * @param array $data 键值数据
+     * @param \Doctrine\DBAL\Connection $db 数据库连接
+     * @return int|string
+     */
+    public function insert($data, $db = null)
+    {
+        $result = $this->getDB($db)->insert($this->getFrom(), $data);
+        return $result ? $this->getDB($db)->lastInsertId() : $result;
+    }
+
+    public function insertAll($data, $db = null)
+    {
+        //不是数组
+        if (!is_array($data)) {
+            throw new BaseException('', BaseException::PARAMS_ILLEGAL);
+        }
+        $fields = array_keys(current($data));
+        $is_set_value = false;
+        $rowsValue = [];
+        foreach ($data as $key=> $row) {
+            if (!is_array($row)) {
+                continue;
+            }
+            $is_set_value = true;
+            $rowValue = [];
+            foreach ($row as $field => $value) {
+                $rowValue[] = isset($value['raw']) ? $value['raw'] : "'".addslashes($value)."'";
+            }
+            $strRowValue = implode(',', $rowValue);
+            $rowsValue ? $rowsValue[] = $strRowValue : null;
+        }
+    }
+
+    /**
+     * 更改数据
+     *
+     * @param mixed $data 数据[键值数组]
+     * @param \Doctrine\DBAL\Connection $db 数据库连接
+     * @return int
+     */
+    public function update($data, $db = null)
+    {
+        $table      = $this->getFrom();
+        $strWhere   = $this->getWhere();
+        $set        = [];
+        $setStr     = '';
+        switch (true) {
+            case is_array($data):
+                foreach ($data as $key => $row) {
+                    $set[] = isset($row['raw']) ? "$key = {$row['raw']}" : "$key = '".addslashes($row)."'";
+                }
+                $setStr = implode(',', $set);
+                break;
+            case is_object($data):
+                break;
+            default:
+                $setStr = $data;
+                break;
+        }
+        $setStr ? $setStr = 'set '.$setStr : null;
+        $sql = "update {$table} {$setStr}{$strWhere}";
+        $result = $this->getDB($db)->executeUpdate($sql);
+        return $result;
+    }
+
+    public function updateAll()
+    {
+
     }
 }
