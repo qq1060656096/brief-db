@@ -1,7 +1,7 @@
 <?php
 namespace Wei\Base\DB;
 
-use Wei\Base\Connection;
+use Wei\Base\DB\Connection;
 use Wei\Base\Exception\BaseException;
 
 class Query

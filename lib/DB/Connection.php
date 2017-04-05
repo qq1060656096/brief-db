@@ -1,5 +1,5 @@
 <?php
-namespace Wei\Base;
+namespace Wei\Base\DB;
 
 use Doctrine\DBAL\DriverManager;
 
@@ -65,7 +65,7 @@ class Connection
     {
         static $db = null;
         if(!$db){
-            $db = new DB();
+            $db = new Connection();
         }
         return $db->dbConnection;
     }
