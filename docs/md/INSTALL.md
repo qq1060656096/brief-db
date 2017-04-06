@@ -32,3 +32,16 @@
 composer install
 ```
 
+<small>4步 使用单元测试必须创建test表</small>
+-------------------------
+```php
+CREATE TABLE IF NOT EXISTS `test` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_bin NOT NULL,
+  `age` int(11) NOT NULL,
+  `uid` int(11) NOT NULL DEFAULT '0',
+  `created` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin AUTO_INCREMENT=284 ;
+
+```
