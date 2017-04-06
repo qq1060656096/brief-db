@@ -347,6 +347,35 @@ class QueryTest extends WeiTestCase
     }
 
     /**
+     * 测试查询多行记录
+     *
+     * @depends testOne
+     */
+    public function testAll()
+    {
+        $query = new Query();
+        $query->from('test');
+        $query->where([
+            '`name`' => '20170406--1439-avg'
+        ]);
+        $query->orderBy(['age' => 'desc']);
+        $query->enabledSqlLog();
+        $result = $query->all();
+        $debugSql = $query->getLastRawSql('id');
+        $this->assertEquals("select * from test where `name` = '20170406--1439-avg' order by age desc", $debugSql['rawSql']);
+        $this->assertEquals('29', $result[0]['age']);
+
+        $query->offset(1);
+        $query->limit(1);
+        $result2 = $query->all();
+        $debugSql = $query->getLastRawSql('id');
+        $this->assertEquals("select * from test where `name` = '20170406--1439-avg' order by age desc limit 1,1", $debugSql['rawSql']);
+
+        $this->assertEquals('19', $result2[0]['age']);
+        $this->assertEquals($result[1]['age'], $result2[0]['age']);
+    }
+
+    /**
      * 测试删除
      * @depends testOne
      */
@@ -450,6 +479,7 @@ class QueryTest extends WeiTestCase
 
     /**
      * 测试平均值
+     * @depends testOne
      */
     public function testAverage()
     {
@@ -467,6 +497,7 @@ class QueryTest extends WeiTestCase
 
     /**
      * 测试统计
+     * @depends testAverage
      */
     public function testCount()
     {
@@ -486,4 +517,6 @@ class QueryTest extends WeiTestCase
         $this->assertEquals("select count(id) from test where `name` = '20170406--1439-avg'", $debugSql['rawSql']);
         $this->assertEquals('2', $result);
     }
+
+
 }
