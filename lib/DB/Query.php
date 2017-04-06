@@ -3,6 +3,7 @@ namespace Wei\Base\DB;
 
 use Wei\Base\DB\Connection;
 use Wei\Base\Exception\BaseException;
+use Wei\Base\Exception\QueryException;
 
 class Query
 {
@@ -207,7 +208,7 @@ class Query
      *
      * @param string|array $fields 查询字段
      * @return $this 失败抛出异常
-     * @throws BaseException 异常
+     * @throws QueryException 异常
      */
     public function addSelect($fields)
     {
@@ -222,7 +223,7 @@ class Query
      *
      * @param string|array $fields 查询字段
      * @return array 成功数组,失败异常
-     * @throws BaseException 异常
+     * @throws QueryException 异常
      */
     public function parseSelect($fields)
     {
@@ -235,7 +236,7 @@ class Query
                 $fields = array_unique($arr);
                 break;
             default:
-                throw new BaseException('', BaseException::SELECT_NOT_PARSE);
+                throw new QueryException('', QueryException::SELECT_NOT_PARSE);
                 break;
         }
         return $fields;
@@ -245,13 +246,13 @@ class Query
      * 设置查询表名
      * @param string $table
      * @return $this 失败抛出异常
-     * @throws BaseException 异常
+     * @throws QueryException 异常
      */
     public function from($table)
     {
         $table = trim($table);
         if (empty($table) || !is_string($table)) {
-            throw new BaseException('', BaseException::TABLE_NAME_NOT_NULL);
+            throw new QueryException('', QueryException::TABLE_NAME_NOT_NULL);
         }
         $this->from = $table;
         return $this;
@@ -261,13 +262,13 @@ class Query
      * 获取表名
      *
      * @return string 成功表名,否则失败
-     * @throws BaseException 抛出异常
+     * @throws QueryException 抛出异常
      */
     public function getFrom()
     {
         $table      = $this->from;
         if (empty($table)) {
-            throw new BaseException('', BaseException::TABLE_NAME_NOT_NULL);
+            throw new QueryException('', QueryException::TABLE_NAME_NOT_NULL);
         }
         return $table;
     }
@@ -374,7 +375,7 @@ class Query
      *
      * @param string|array $where
      * @return $this 失败抛出异常
-     * @throws BaseException 异常
+     * @throws QueryException 异常
      */
     public function where($where)
     {
@@ -386,7 +387,7 @@ class Query
      *
      * @param string|array $where 条件
      * @return $this 失败抛出异常
-     * @throws BaseException 异常
+     * @throws QueryException 异常
      */
     public function andWhere($where)
     {
@@ -402,7 +403,7 @@ class Query
      *
      * @param string|array $where 条件
      * @return $this 失败抛出异常
-     * @throws BaseException 异常
+     * @throws QueryException 异常
      */
     public function orWhere($where)
     {
@@ -443,7 +444,7 @@ class Query
      * 解析where
      * @param string|array $where 条件
      * @return string 成功返回字符串
-     * @throws BaseException 失败抛出异常
+     * @throws QueryException 失败抛出异常
      */
     public function parseWhere($where)
     {
@@ -501,7 +502,7 @@ class Query
                 return $whereStr;
                 break;
             default:
-                throw new BaseException(BaseException::WHERE_NOT_PARSE);
+                throw new QueryException(QueryException::WHERE_NOT_PARSE);
                 break;
         }
     }
@@ -513,7 +514,7 @@ class Query
      *
      * @param string|array $groupBy 分组查询
      * @return arrray 成功数组,失败抛出异常
-     * @throws BaseException 抛出异常
+     * @throws QueryException 抛出异常
      */
     public function parseGoupBy($groupBy)
     {
@@ -528,7 +529,7 @@ class Query
                 $arr = preg_split('/\s*,\s*/', trim($groupBy), -1, PREG_SPLIT_NO_EMPTY);
                 break;
            default:
-               throw new BaseException('', BaseException::GROUP_BY_NOT_PARSE);//解析失败
+               throw new QueryException('', QueryException::GROUP_BY_NOT_PARSE);//解析失败
                break;
        }
        return $arr;
@@ -566,7 +567,7 @@ class Query
      *
      * @param string|array $groupBy 分组查询
      * @return $this 失败抛出异常
-     * @throws BaseException
+     * @throws QueryException
      */
     public function groupBy($groupBy)
     {
@@ -579,7 +580,7 @@ class Query
      *
      * @param string|array $groupBy 分组查询
      * @return $this 失败抛出异常
-     * @throws BaseException 异常
+     * @throws QueryException 异常
      */
     public function addGroupBy($groupBy)
     {
@@ -595,7 +596,7 @@ class Query
      *
      * @param string|array $groupBy 排序
      * @return arrray 成功数组,失败抛出异常
-     * @throws BaseException 抛出异常
+     * @throws QueryException 抛出异常
      */
     public function parseOrderBy($orderBy)
     {
@@ -616,7 +617,7 @@ class Query
                 $arr = preg_split('/\s*,\s*/', trim($orderBy), -1, PREG_SPLIT_NO_EMPTY);
                 break;
             default:
-                throw new BaseException('', BaseException::ORDER_BY_NOT_PARSE);//解析失败
+                throw new QueryException('', QueryException::ORDER_BY_NOT_PARSE);//解析失败
                 break;
         }
         return $arr;
@@ -654,7 +655,7 @@ class Query
      *
      * @param string|array $groupBy 分组查询
      * @return $this 失败抛出异常
-     * @throws BaseException
+     * @throws QueryException
      */
     public function orderBy($orderBy)
     {
@@ -667,7 +668,7 @@ class Query
      *
      * @param string|array $groupBy 分组查询
      * @return $this 失败抛出异常
-     * @throws BaseException 异常
+     * @throws QueryException 异常
      */
     public function addOrderBy($orderBy)
     {
@@ -709,7 +710,7 @@ class Query
      *
      *
      * @return string
-     * @throws BaseException
+     * @throws QueryException
      */
     public function getSelectRawSqlPart()
     {
@@ -727,7 +728,7 @@ class Query
      * 获取单行单列列sql[]
      * @param string $field 字段名
      * @return string 成功string,否则失败
-     * @throws BaseException 抛出异常
+     * @throws QueryException 抛出异常
      */
     public function getColumnRawSqlPart($field)
     {
@@ -884,14 +885,14 @@ class Query
      * @param array $rows 多行键值数组
      * @param \Doctrine\DBAL\Connection $db 数据库连接
      * @return int 插入条数
-     * @throws BaseException 抛出异常
+     * @throws QueryException 抛出异常
      */
     public function insertAll($rows, $db = null)
     {
         $table = $this->getFrom();
         //不是数组
         if (!is_array($rows)) {
-            throw new BaseException('', BaseException::PARAMS_ILLEGAL);
+            throw new QueryException('', QueryException::PARAMS_ILLEGAL);
         }
         //获取插入字段
         $fields = array_keys(current($rows));
@@ -972,22 +973,30 @@ class Query
         return $result;
     }
 
+
     /**
-     * 更改数据
+     * 批量更改数据
      *
-     * @param mixed $rows 多行键值数组[键值数组]
+     * @param BatchOperation $batchOperation 批量更新数据
      * @param \Doctrine\DBAL\Connection $db 数据库连接
-     * @return int
+     * @return int 更新条数
+     * @throws BaseException 抛出异常
      */
-    public function updateAll($rows, $db = null)
+    public function updateAll(BatchOperation $batchOperation, $db = null)
     {
         $this->getDB($db)->beginTransaction();
-
+        $rows       = $batchOperation->getData();
+        $updateRows = 0;//更新行数
+        $query      = new Query();
+        $query->from($this->getFrom());
         foreach ($rows as $key => $row) {
-            if(isset($row['where'])){
-
+            if(isset($row['where']) && isset($row['data'])){
+                $query->where($row['where']);
+                $result = $query->update($row['data']);
+                $result ? $updateRows++ : null;
             }
         }
         $this->getDB($db)->commit();
+        return $updateRows;
     }
 }

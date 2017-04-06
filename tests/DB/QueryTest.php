@@ -3,6 +3,7 @@ namespace Wei\Base\Tests\DB;
 
 use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 use Wei\Base\DB\Query;
+use Wei\Base\DB\BatchOperation;
 use Wei\Base\Exception\BaseException;
 use Wei\Base\Exception\LimitFrequencyException;
 use Wei\Base\Tests\WeiTestCase;
@@ -17,7 +18,13 @@ class QueryTest extends WeiTestCase
         $query->where([
             'name' => [
                 'op' => 'like',
-                '20170406--%'
+                '20170406-%'
+            ]
+        ])->delete();
+        $query->where([
+            'name' => [
+                'op' => 'like',
+                '20170406--2340-update%'
             ]
         ])->delete();
         self::setFixture();
@@ -73,6 +80,28 @@ class QueryTest extends WeiTestCase
             'uid' => '201704061716',
             'created' => '2017-04-06 17:16:28',
         ]);
+
+
+        $query->insert([
+            'name' => '20170406--2340-update1',
+            'age' => 1701,
+            'uid' => '201704062340',
+            'created' => '2017-04-06 23:40:28',
+        ]);
+
+        $query->insert([
+            'name' => '20170406--2340-update2',
+            'age' => 1702,
+            'uid' => '201704062340',
+            'created' => '2017-04-06 23:40:28',
+        ]);
+
+        $query->insert([
+            'name' => '20170406--2340-update3',
+            'age' => 1703,
+            'uid' => '201704062340',
+            'created' => '2017-04-06 23:40:28',
+        ]);
     }
     /**
      * 测试查询字段[select]
@@ -108,7 +137,7 @@ class QueryTest extends WeiTestCase
 
     /**
      * 测试空表名
-     * @expectedException \Wei\Base\Exception\BaseException
+     * @expectedException \Wei\Base\Exception\QueryException
      */
     public function testFormThrowException()
     {
@@ -584,5 +613,49 @@ class QueryTest extends WeiTestCase
         $this->assertEquals('1', $result);
 
         $result = $query->update("`name` = '20170406--1704-update2'");
+    }
+
+    /**
+     * 批量更新
+     * @depends testOne
+     */
+    public function testUpdataAll()
+    {
+
+        $batchOperation = new BatchOperation();
+        $where = [
+            'name' => '20170406--2340-update1'
+        ];
+        $data = [
+            'name' => '20170406--2340-update11',
+            'age' => 17011,
+            'uid' => '11',
+            'created' => '2017-04-06 23:40:28',
+        ];
+        $batchOperation->addData($where, $data);
+        $where = [
+            'name' => '20170406--2340-update2'
+        ];
+        $data = [
+            'name' => '20170406--2340-update22',
+            'age' => 17022,
+            'uid' => '22',
+            'created' => '2017-04-06 23:40:28',
+        ];
+        $batchOperation->addData($where, $data);
+        $where = [
+            'name' => '20170406--2340-update3'
+        ];
+        $data = [
+            'name' => '20170406--2340-update33',
+            'age' => 17033,
+            'uid' => '33',
+            'created' => '2017-04-06 23:40:28',
+        ];
+        $batchOperation->addData($where, $data);
+        $query = new Query();
+        $query->from('test');
+        $result = $query->updateAll($batchOperation);
+        $this->assertEquals('3', $result);
     }
 }
