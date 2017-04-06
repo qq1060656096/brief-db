@@ -39,6 +39,10 @@ class Query
     const RIGHT_JOIN = 'right join';
 
     /**
+     * where 操作符in
+     */
+    const WHERE_OP_IN = 'in';
+    /**
      * 查询字段
      *
      * @var null|array
@@ -410,6 +414,32 @@ class Query
     }
 
     /**
+     * 变量转 where in值[demo:"('1','2','3')"]
+     * @param string|array $var 变量
+     * @return string
+     */
+    public function convertToWhereIn($var)
+    {
+        $strIn = '';
+        switch (true) {
+            case is_array($var):
+                $arrIn = [];
+                foreach ($var as $key => $value) {
+                    $arrIn[] = '\''.addslashes($value).'\'';
+                }
+                $strIn = implode(",", $arrIn);
+                $strIn ? $strIn = '('.$strIn.')' : null;
+                break;
+            case is_numeric($var):
+            case is_string($var):
+                $strIn = '(\''.addslashes($var).'\')';
+                break;
+            default:
+                break;
+        }
+        return $strIn;
+    }
+    /**
      * 解析where
      * @param string|array $where 条件
      * @return string 成功返回字符串
@@ -430,6 +460,7 @@ class Query
                 foreach ($where as $key => $row) {
                     $on = isset($row['on']) && strtolower($row['on'])==self::WHERE_OR ? self::WHERE_OR: self::WHERE_AND;
                     $op = isset($row['op']) && $row['op'] ? $row['op']: '=';
+                    $op = trim(strtolower($op));
                     if (is_array($row)) {
                         unset($row['op'], $row['on']);
                     }
@@ -456,7 +487,14 @@ class Query
                     if ($is_set_value === false) {
                         continue;
                     }
-                    $value = isset($row['rawValue']) ? $row['rawValue'] : '\''.addslashes($value).'\'';
+
+                    if (isset($row['rawValue'])) {
+                        $value = $row['rawValue'];
+                    } elseif ($op == self::WHERE_OP_IN) {
+                         $value = $this->convertToWhereIn($value);
+                    }else{
+                        $value = '\''.addslashes($value).'\'';
+                    }
                     $tmp = implode(" ", [$key, $op, $value]);
                     $whereStr .= empty($whereStr) ? $tmp : " $on ".$tmp;
                 }
@@ -704,19 +742,34 @@ class Query
     }
 
     /**
+     * 获取删除sql部分
+     *
+     * @return string
+     */
+    public function getDeleteRawSqlPart()
+    {
+        $table      = $this->getFrom();
+        $strWhere   = $this->getWhere();
+        $strJoin    = $this->getJoin();
+        $strOrderBy = $this->getOrderBy();
+        $sql = "delete from {$table}{$strWhere}{$strOrderBy}";
+        return $sql;
+    }
+
+    /**
      * 获取SQL limit部分
      *
      * @return string
      */
-    public function getSelectRawLimitPart()
+    public function getRawLimitPart()
     {
         $strLimit = '';
         switch (true) {
             case $this->offset && $this->limit:
-                $strLimit = "limit {$this->offset},{$this->limit}";
+                $strLimit = " limit {$this->offset},{$this->limit}";
                 break;
             case $this->limit:
-                $strLimit = "limit {$this->limit}";
+                $strLimit = " limit {$this->limit}";
                 break;
         }
         return $strLimit;
@@ -742,7 +795,7 @@ class Query
      */
     public function all($db = null)
     {
-        $sql = $this->getSelectRawSqlPart().$this->getSelectRawLimitPart();
+        $sql = $this->getSelectRawSqlPart().$this->getRawLimitPart();
         return $this->getDB($db)->fetchAll($sql);
     }
 
@@ -769,6 +822,19 @@ class Query
     public function min($field, $db = null)
     {
         $sql = $this->getColumnRawSqlPart("min({$field})");
+        return $this->getDB($db)->fetchColumn($sql);
+    }
+
+    /**
+     * 获取总和
+     *
+     * @param string $field 字段名
+     * @param \Doctrine\DBAL\Connection $db 数据库连接
+     * @return mixed
+     */
+    public function sum($field, $db = null)
+    {
+        $sql = $this->getColumnRawSqlPart("sum({$field})");
         return $this->getDB($db)->fetchColumn($sql);
     }
 
@@ -835,6 +901,19 @@ class Query
         }
     }
 
+    /**
+     * 删除数据[limit限制条数]
+     *
+     * @param null $db
+     * @return int
+     */
+    public function delete($db = null)
+    {
+        $sql        = $this->getDeleteRawSqlPart();
+        $strLimit   = $this->getRawLimitPart();
+        $sql        = "$sql{$strLimit}";
+        return $this->getDB($db)->exec($sql);
+    }
     /**
      * 更改数据
      *
