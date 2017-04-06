@@ -35,4 +35,9 @@ class BaseException extends \Exception
      */
     const PARAMS_ILLEGAL = 41010;
 
+    /**
+     * 多行更新参数错误
+     */
+    const UPDATE_ALL_PARAMS_ILLEGAL = 41011;
+
 }

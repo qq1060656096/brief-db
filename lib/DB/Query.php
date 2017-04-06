@@ -984,7 +984,9 @@ class Query
         $this->getDB($db)->beginTransaction();
 
         foreach ($rows as $key => $row) {
+            if(isset($row['where'])){
 
+            }
         }
         $this->getDB($db)->commit();
     }
