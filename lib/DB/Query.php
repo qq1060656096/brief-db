@@ -878,27 +878,53 @@ class Query
         return $result ? $this->getDB($db)->lastInsertId() : $result;
     }
 
-    public function insertAll($data, $db = null)
+    /**
+     * 插入多条数据
+     *
+     * @param array $rows 多行键值数组
+     * @param \Doctrine\DBAL\Connection $db 数据库连接
+     * @return int 插入条数
+     * @throws BaseException 抛出异常
+     */
+    public function insertAll($rows, $db = null)
     {
+        $table = $this->getFrom();
         //不是数组
-        if (!is_array($data)) {
+        if (!is_array($rows)) {
             throw new BaseException('', BaseException::PARAMS_ILLEGAL);
         }
-        $fields = array_keys(current($data));
+        //获取插入字段
+        $fields = array_keys(current($rows));
         $is_set_value = false;
         $rowsValue = [];
-        foreach ($data as $key=> $row) {
+        foreach ($rows as $key=> $row) {
             if (!is_array($row)) {
                 continue;
             }
-            $is_set_value = true;
-            $rowValue = [];
+            $is_set_value   = true;
+            $rowValue       = [];
             foreach ($row as $field => $value) {
                 $rowValue[] = isset($value['raw']) ? $value['raw'] : "'".addslashes($value)."'";
             }
             $strRowValue = implode(',', $rowValue);
-            $rowsValue ? $rowsValue[] = $strRowValue : null;
+            $strRowValue ? $rowsValue[] = '('.$strRowValue.')' : null;
         }
+        $strFields      = implode(',', $fields);
+        $strFields      = $strFields ? '('.$strFields.')' : '';
+        $strRowsValue   = implode(',', $rowsValue);
+        $sql = "insert into {$table}{$strFields} values{$strRowsValue}";
+        return $this->getDB($db)->exec($sql);
+    }
+
+    /**
+     * 获取最后插入id
+     *
+     * @param \Doctrine\DBAL\Connection $db 数据库连接
+     * @return string
+     */
+    public function getLastInsertId($db = null)
+    {
+        return $this->getDB($db)->lastInsertId();
     }
 
     /**
@@ -946,8 +972,20 @@ class Query
         return $result;
     }
 
-    public function updateAll()
+    /**
+     * 更改数据
+     *
+     * @param mixed $rows 多行键值数组[键值数组]
+     * @param \Doctrine\DBAL\Connection $db 数据库连接
+     * @return int
+     */
+    public function updateAll($rows, $db = null)
     {
+        $this->getDB($db)->beginTransaction();
 
+        foreach ($rows as $key => $row) {
+
+        }
+        $this->getDB($db)->commit();
     }
 }
