@@ -122,8 +122,8 @@ class Query
     /**
      * 开启sql日志
      *
-     * @see ModelBase::getLastRawSql()
-     * @return bool
+     * @see Query::getLastRawSql()
+     * @return $this
      */
     public function enabledSqlLog()
     {
@@ -131,13 +131,13 @@ class Query
             $this->logger = new \Doctrine\DBAL\Logging\DebugStack();
             $this->DB->getConfiguration()->setSQLLogger($this->logger);
         }
-        return true;
+        return $this;
     }
 
     /**
      * 获取最后执行sql
      *
-     * @see ModelBase::enabledSqlLog()
+     * @see Query::enabledSqlLog()
      * @return array|null
      */
     public function getLastRawSql()

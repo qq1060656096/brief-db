@@ -2,6 +2,7 @@
 namespace Wei\Base\DB;
 
 use Doctrine\DBAL\DriverManager;
+use Wei\Base\Config\Config;
 
 /**
  * 数据库连接类
@@ -26,27 +27,35 @@ class Connection
      */
     private function __construct()
     {
-        $conn = DriverManager::getConnection(
-            array(
-                'wrapperClass' => 'Doctrine\DBAL\Connections\MasterSlaveConnection',
-                'driver' => 'pdo_mysql',
-                'master' => array(
-                    'user' => 'root',
-                    'password' => 'root',
-                    'host' => 'localhost',
-                    'dbname' => 'demo'
+        $db_user = Config::get('db_user', 'db.php');
+        $db_pass = Config::get('db_pass', 'db.php');
+        $db_host = Config::get('db_host', 'db.php');
+        $db_port = Config::get('db_port', 'db.php');
+        $db_name = Config::get('db_name', 'db.php');
+        //主从配置
+        $config = array(
+            'wrapperClass' => 'Doctrine\DBAL\Connections\MasterSlaveConnection',
+            'driver' => 'pdo_mysql',
+            'master' => array(
+                'user'      => $db_user,
+                'password'  => $db_pass,
+                'host'      => $db_host,
+                'port'      => $db_port,
+                'dbname'    => $db_name
+            ),
+            'slaves' => array(
+                array(
+                    'user'      => $db_user,
+                    'password'  => $db_pass,
+                    'host'      => $db_host,
+                    'port'      => $db_port,
+                    'dbname'    => $db_name
                 ),
-                'slaves' => array(
-                    array(
-                        'user' => 'root',
-                        'password'=>'root',
-                        'host' => 'localhost',
-                        'dbname' => 'demo'
-                    ),
-                ),
-                'keepSlave'=>true,//注意保持从数据库连接
-            )
+            ),
+            'keepSlave'=>true,//注意保持从数据库连接
         );
+
+        $conn = DriverManager::getConnection($config);
         $this->dbConnection = $conn;
     }
 
