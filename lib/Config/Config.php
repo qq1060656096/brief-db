@@ -75,7 +75,7 @@ class Config
                     throw new ConfigException("$configFile not found", ConfigException::FILE_NOT_FOUND);//配置文件不存在
                 }
                 $configFileArr[$configFile] = $configFile;
-                $config = include $configFile;
+                $config     = include $configFile;
                 $configData = array_merge($configData, $config);
                 break;
 

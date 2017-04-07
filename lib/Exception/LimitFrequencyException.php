@@ -18,4 +18,14 @@ class LimitFrequencyException extends BaseException
      * 键不是访问频率限制键
      */
     const KEY_IS_NOT_FREQUENCY_KEY = 41202;
+
+    /**
+     * 缓存实例非法(缓存实例不对)
+     */
+    const CACHE_INSTANCE_ILLEGAL = 41203;
+
+    /**
+     * 缓存不能为null
+     */
+    const CACHE_NOT_NULL = 41204;
 }

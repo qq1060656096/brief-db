@@ -1,9 +1,15 @@
 <?php
-namespace Wei\Base\Common;
+namespace Wei\Base\LimitFrequency;
 
 use Wei\Base\Exception\LimitFrequencyException;
 
-class LimitFrequency
+/**
+ * 内存缓存限制访问频率
+ *
+ * Class LimitFrequency
+ * @package Wei\Base\LimitFrequency
+ */
+class LimitFrequencyMemory
 {
     /**
      * 锁定值
@@ -16,20 +22,35 @@ class LimitFrequency
 
     /**
      * 获取缓存
+     *
      * @return \Doctrine\Common\Cache\Cache
+     * @throws LimitFrequencyException 抛出异常
      */
     public function getCache()
     {
+        switch (true) {
+            case $this->cache === null:
+                throw new LimitFrequencyException('', LimitFrequencyException::CACHE_NOT_NULL);
+                break;
+            case $this->cache instanceof \Doctrine\Common\Cache\Cache:
+                break;
+            default:
+                throw new LimitFrequencyException('', LimitFrequencyException::CACHE_INSTANCE_ILLEGAL);
+                break;
+        }
         return $this->cache;
     }
 
     /**
      * 设置缓存
+     *
      * @param \Doctrine\Common\Cache\Cache $cache doctrine缓存类
+     * @return $this
      */
     public function setCache(\Doctrine\Common\Cache\Cache $cache)
     {
         $this->cache = $cache;
+        return $this;
     }
 
     /**
@@ -39,7 +60,7 @@ class LimitFrequency
      * @param string $suffix 后缀
      * @return string 键名
      */
-    public function buildKey($key,$prefix='',$suffix='')
+    public function buildKey($key, $prefix='',$suffix='')
     {
         $key = md5(json_encode($key));
         return $prefix.$key.$suffix;
@@ -71,12 +92,12 @@ class LimitFrequency
                 throw new LimitFrequencyException('', LimitFrequencyException::KEY_IS_LOCK);
                 break;
             case $value === false://键不存在
-                $value = 1;
+                $value  = 1;
                 $result = $this->getCache()->save($key, $value, $limitTime);
                 break;
             case is_numeric($value):
-                $value ++;
-                $result = $this->getCache()->save($key, $value);
+                $value++;
+                $result = $this->getCache()->save($key, $value, $limitTime);
                 break;
             default://非法操作
                 throw new LimitFrequencyException('', LimitFrequencyException::KEY_IS_NOT_FREQUENCY_KEY);
