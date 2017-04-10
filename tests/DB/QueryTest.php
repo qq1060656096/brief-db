@@ -413,7 +413,7 @@ class QueryTest extends WeiTestCase
         $query->from('test');
         $query->where(['name' => '20170406--0950']);
         $query->enabledSqlLog();
-        $result = $query->one();
+        $result = $query->findOne();
         $this->assertEquals('20170406--0950', $result['name']);
         $this->assertEquals('20', $result['age']);
     }
@@ -432,14 +432,14 @@ class QueryTest extends WeiTestCase
         ]);
         $query->orderBy(['age' => 'desc']);
         $query->enabledSqlLog();
-        $result = $query->all();
+        $result = $query->findAll();
         $debugSql = $query->getLastRawSql('id');
         $this->assertEquals("select * from test where `name` = '20170406--1439-avg' order by age desc", $debugSql['rawSql']);
         $this->assertEquals('29', $result[0]['age']);
 
         $query->offset(1);
         $query->limit(1);
-        $result2 = $query->all();
+        $result2 = $query->findAll();
         $debugSql = $query->getLastRawSql('id');
         $this->assertEquals("select * from test where `name` = '20170406--1439-avg' order by age desc limit 1,1", $debugSql['rawSql']);
 
@@ -494,7 +494,7 @@ class QueryTest extends WeiTestCase
         $result = $query->min('id');
         $debugSql = $query->getLastRawSql();
         $this->assertEquals("select min(id) from test where `name` = '20170406--0016' order by id asc", $debugSql['rawSql']);
-        $row = $query->one();
+        $row = $query->findOne();
         $this->assertEquals($row['id'], $result);
         $this->assertEquals('20170406--0016', $row['name']);
     }
@@ -515,7 +515,7 @@ class QueryTest extends WeiTestCase
         ]);
         $query->orderBy(['id' => 'desc']);
 
-        $row = $query->one();
+        $row = $query->findOne();
 
         $query->enabledSqlLog();
         $max = $query->max('id');
@@ -537,7 +537,7 @@ class QueryTest extends WeiTestCase
         $query->where([
             '`name`' => '20170406--1439-avg'
         ]);
-        $result = $query->all();
+        $result = $query->findAll();
         $arrAge = array_column($result, 'age');
         $sumAge = array_sum($arrAge);
 

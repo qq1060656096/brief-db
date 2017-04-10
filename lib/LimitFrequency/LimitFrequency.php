@@ -60,7 +60,7 @@ class LimitFrequency
      * @param string $suffix 后缀
      * @return string 键名
      */
-    public function buildKey($key, $prefix='',$suffix='')
+    public function buildKey($key, $prefix='', $suffix='')
     {
         $key = md5(json_encode($key));
         return $prefix.$key.$suffix;
@@ -90,11 +90,11 @@ class LimitFrequency
         switch (true) {
             case $cacheValue === false:
                 $obj    = new LimitFrequencyOperation();
-                $value  = $obj->getFrequency($key,$limitTime);
+                $value  = $obj->getFrequency($key, $limitTime);
                 $this->getCache()->save($key, $obj, $limitTime);
                 break;
             default:
-                $value  = $cacheValue->getFrequency($key,$limitTime);
+                $value  = $cacheValue->getFrequency($key, $limitTime);
                 $this->getCache()->save($key, $cacheValue, $limitTime);
                 break;
         }

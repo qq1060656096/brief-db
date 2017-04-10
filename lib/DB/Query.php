@@ -104,9 +104,16 @@ class Query
      */
     public $logger = null;
 
+    /**
+     * 数据库连接
+     *
+     * @var \Doctrine\DBAL\Connections\MasterSlaveConnection|null
+     */
+    protected $db = null;
+
     public function __construct()
     {
-        $this->DB = Connection::getInstance();
+        $this->db = Connection::getInstance();
     }
 
     /**
@@ -117,7 +124,7 @@ class Query
      */
     public function getDB($db = null)
     {
-        return $db ? $db:$this->DB;
+        return $db ? $db:$this->db;
     }
     /**
      * 开启sql日志
@@ -129,7 +136,7 @@ class Query
     {
         if (!$this->logger) {
             $this->logger = new \Doctrine\DBAL\Logging\DebugStack();
-            $this->DB->getConfiguration()->setSQLLogger($this->logger);
+            $this->getDB()->getConfiguration()->setSQLLogger($this->logger);
         }
         return $this;
     }
@@ -782,7 +789,7 @@ class Query
      * @param \Doctrine\DBAL\Connection $db 数据库连接
      * @return array|mixed
      */
-    public function one($db = null)
+    public function findOne($db = null)
     {
         $sql = $this->getSelectRawSqlPart()." limit 1";
         return $this->getDB($db)->fetchAssoc($sql);
@@ -794,7 +801,7 @@ class Query
      * @param \Doctrine\DBAL\Connection $db 数据库连接
      * @return array|mixed
      */
-    public function all($db = null)
+    public function findAll($db = null)
     {
         $sql = $this->getSelectRawSqlPart().$this->getRawLimitPart();
         return $this->getDB($db)->fetchAll($sql);

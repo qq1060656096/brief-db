@@ -32,18 +32,34 @@
 composer install
 ```
 
-4步 使用单元测试必须创建test表
+4步 使用单元测试必须创建以下表结构
 -------------------------
 ```php
-CREATE TABLE IF NOT EXISTS `test` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8mb4_bin NOT NULL,
-  `age` int(11) NOT NULL,
-  `uid` int(11) NOT NULL DEFAULT '0',
-  `created` datetime NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin AUTO_INCREMENT=284 ;
 
+CREATE TABLE `tbl_demo1` (
+  `did` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `title` varchar(255) DEFAULT NULL,
+  `created` datetime DEFAULT NULL,
+  PRIMARY KEY (`did`)
+) ENGINE=MyISAM AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4;
+
+
+CREATE TABLE `tbl_demo2` (
+  `did` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `title` varchar(255) DEFAULT NULL,
+  `created` datetime DEFAULT NULL,
+  PRIMARY KEY (`did`)
+) ENGINE=MyISAM AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4;
+
+
+CREATE TABLE `test` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `age` int(11) DEFAULT NULL,
+  `uid` int(11) DEFAULT NULL,
+  `created` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=3965 DEFAULT CHARSET=utf8mb4;
 ```
 
 5步 请在项目根目录增加config/db.php
@@ -53,12 +69,14 @@ CREATE TABLE IF NOT EXISTS `test` (
 <?php
 //数据库配置
 return [
-    'db_user' => 'root',
-    'db_pass' => 'root',
-    'db_host' => 'localhost',
-    'db_port' => 3306,
-    'db_name' => 'demo',
+    'db_host' => 'localhost',//主机
+    'db_port' => 3306,//端口
+    'db_user' => 'root',//账户
+    'db_pass' => 'root',//密码
+    'db_name' => 'demo',//数据库名
+    'table_prefix'  => 'tbl_',//表前缀
 ];
+
 
 
 ```

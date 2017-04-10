@@ -6,7 +6,7 @@ use Wei\Base\Exception\LimitFrequencyException;
 /**
  * 内存缓存限制访问频率
  *
- * Class LimitFrequency
+ * Class LimitFrequencyMemory
  * @package Wei\Base\LimitFrequency
  */
 class LimitFrequencyMemory
