@@ -117,10 +117,15 @@ class Pagination
         $this->pageSize     = max(1, $this->pageSize);
         $this->firstPage    = 1;
         $this->totalPage    = ceil($this->totalCount / $this->pageSize);
+        $this->page         = min($this->totalPage, $this->page);
         $this->lastPage     = $this->totalPage;
-        $this->startShowPage = max(1, $this->page - $this->showPageNum);
-        $this->endShowPage  = max($this->totalPage, $this->page + $this->showPageNum);
+        $this->prevPage     = max(1, $this->page - 1);
+        $this->nextPage     = min($this->totalPage, $this->page + 1);
         $this->offset       = ($this->page -1) * $this->pageSize;
+
+        $this->startShowPage = max(1, $this->page - $this->showPageNum);
+        $this->endShowPage  = min($this->totalPage, $this->page + $this->showPageNum);
+
 
     }
 
@@ -189,10 +194,11 @@ class Pagination
 
     /**
      * 条数
+     * @return integer
      */
     public function getLimit()
     {
-        $this->pageSize;
+        return $this->pageSize;
     }
 
     /**
