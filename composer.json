@@ -1,8 +1,8 @@
 {
-  "name": "wei/doctrine-model",
+  "name": "wei/base",
   "type": "library",
   "description": "base library for PHP",
-  "keywords": ["doctrine-model"],
+  "keywords": [""],
   "license": "BSD",
   "authors": [
     {
