@@ -882,8 +882,7 @@ class Query
      */
     public function insert($data, $db = null)
     {
-        $result = $this->getDB($db)->insert($this->getFrom(), $data);
-        return $result ? $this->getDB($db)->lastInsertId() : $result;
+        return $this->getDB($db)->insert($this->getFrom(), $data);
     }
 
     /**
