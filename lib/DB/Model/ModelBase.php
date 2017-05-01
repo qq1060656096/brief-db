@@ -50,6 +50,9 @@ abstract class ModelBase extends Query
             case $debug === true:
                 return $instance;
                 break;
+            case $isSingle === false:
+                return new $class();
+                break;
             case $isSingle === true && isset($instance[$class]):
                 break;
             default:
