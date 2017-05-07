@@ -145,6 +145,25 @@ class ArrayLib
         }
         return true;
     }
+
+    /**
+     * 数字相加
+     * @param array $arr1
+     * @param array $arr2
+     * @return array
+     */
+    public static function array_add($arr1, $arr2)
+    {
+        $newArr = [];
+        foreach ($arr1 as $key => $value) {
+            $newArr[] = $value;
+        }
+
+        foreach ($arr2 as $key => $value) {
+            $newArr[] = $value;
+        }
+        return $newArr;
+    }
     
 }
 

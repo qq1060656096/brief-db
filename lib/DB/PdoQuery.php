@@ -1,6 +1,7 @@
 <?php
 namespace Wei\Base\DB;
 
+use Wei\Base\Common\ArrayLib;
 use Wei\Base\DB\Connection;
 use Wei\Base\Exception\BaseException;
 use Wei\Base\Exception\QueryException;
@@ -398,9 +399,15 @@ class PdoQuery
      */
     public function andWhere($where)
     {
-        $whereStr = $this->parseWhere($where);
-        if ($whereStr) {
-            $this->where = $this->where ? $this->where.' and '.$whereStr : $whereStr;
+        $arr    = $this->parseWhere($where);
+        $str    = '';
+        $params = [];
+        if ($arr) {
+            list($str, $params) = $arr;
+        }
+        if ($this->where) {
+            list($oldStr, $oldParams) = $this->where;
+            $this->where = [$oldStr.' and '.$str, ArrayLib::array_add($oldParams, $params)];
         }
         return $this;
     }
@@ -414,9 +421,15 @@ class PdoQuery
      */
     public function orWhere($where)
     {
-        $whereStr = $this->parseWhere($where);
-        if ($whereStr) {
-            $this->where = $this->where ? $this->where.' or '.$whereStr : $whereStr;
+        $arr    = $this->parseWhere($where);
+        $str    = '';
+        $params = [];
+        if ($arr) {
+            list($str, $params) = $arr;
+        }
+        if ($this->where) {
+            list($oldStr, $oldParams) = $this->where;
+            $this->where = [$oldStr.' or '.$str, ArrayLib::array_add($oldParams, $params)];
         }
         return $this;
     }
@@ -428,24 +441,27 @@ class PdoQuery
      */
     public function convertToWhereIn($var)
     {
-        $strIn = '';
+        $str    = '';
+        $params = [];
         switch (true) {
             case is_array($var):
                 $arrIn = [];
                 foreach ($var as $key => $value) {
-                    $arrIn[] = '\''.addslashes($value).'\'';
+                    $arrIn[] = $value;
                 }
-                $strIn = implode(",", $arrIn);
-                $strIn ? $strIn = '('.$strIn.')' : null;
+                $str = implode(",", array_pad('', count($arrIn), '?'));
+                $str ? $str = '('.$str.')' : null;
+                $params = $var;
                 break;
             case is_numeric($var):
             case is_string($var):
-                $strIn = '(\''.addslashes($var).'\')';
+                $str    = '(?)';
+                $params[] = $var;
                 break;
             default:
                 break;
         }
-        return $strIn;
+        return [$str, $var];
     }
     /**
      * 解析where
@@ -600,8 +616,14 @@ class PdoQuery
     public function addGroupBy($groupBy)
     {
         $arr = $this->parseGoupBy($groupBy);
+        $str    = '';
+        $params = [];
         if ($arr) {
-            $this->groupBy = $this->groupBy ? array_merge($this->groupBy, $arr) : $arr;
+            list($str, $params) = $arr;
+        }
+        if ($this->groupBy) {
+            list($oldStr, $oldParams) = $this->groupBy;
+            $this->where = [$oldStr.' , '.$str, ArrayLib::array_add($oldParams, $params)];
         }
         return $this;
     }
@@ -730,14 +752,31 @@ class PdoQuery
      */
     public function getSelectRawSqlPart()
     {
-        $strFields  = $this->getSelect();
-        $table      = $this->getFrom();
-        $strWhere   = $this->getWhere();
-        $strJoin    = $this->getJoin();
-        $strGroupBy = $this->getGroupBy();
-        $strOrderBy = $this->getOrderBy();
-        $sql = "select {$strFields} from {$table}{$strWhere}{$strGroupBy}{$strOrderBy}";
-        return $sql;
+//        $strFields  = $this->getSelect();
+//        $table      = $this->getFrom();
+//        $strWhere   = $this->getWhere();
+//        $strJoin    = $this->getJoin();
+//        $strGroupBy = $this->getGroupBy();
+//        $strOrderBy = $this->getOrderBy();
+//        $sql = "select {$strFields} from {$table}{$strWhere}{$strGroupBy}{$strOrderBy}";
+
+        $arr[]  = $this->getSelect();
+        $arr[]  = ['from ? ',[$this->getFrom()]];
+        $arr[]  = $this->getWhere();
+        $arr[]  = $this->getJoin();
+        $arr[]  = $this->getGroupBy();
+        $arr[]  = $this->getOrderBy();
+        $sql = 'select ';
+        $allParams = [];
+        foreach ($arr as $key=>$value) {
+            if (count($value) == 2) {
+                list($str, $params) = $value;
+                $sql .=  $str;
+                $allParams = ArrayLib::array_add($allParams, $params);
+
+            }
+        }
+        return [$sql, $allParams];
     }
 
     /**
@@ -748,14 +787,31 @@ class PdoQuery
      */
     public function getColumnRawSqlPart($field)
     {
-        $strFields  = "$field";
-        $table      = $this->getFrom();
-        $strWhere   = $this->getWhere();
-        $strJoin    = $this->getJoin();
-        $strGroupBy = $this->getGroupBy();
-        $strOrderBy = $this->getOrderBy();
-        $sql = "select {$strFields} from {$table}{$strWhere}{$strGroupBy}{$strOrderBy}";
-        return $sql;
+//        $strFields  = "$field";
+//        $table      = $this->getFrom();
+//        $strWhere   = $this->getWhere();
+//        $strJoin    = $this->getJoin();
+//        $strGroupBy = $this->getGroupBy();
+//        $strOrderBy = $this->getOrderBy();
+//        $sql = "select {$strFields} from {$table}{$strWhere}{$strGroupBy}{$strOrderBy}";
+
+        $arr[]  = ['?', [$field]];
+        $arr[]  = ['from ? ',[$this->getFrom()]];
+        $arr[]  = $this->getWhere();
+        $arr[]  = $this->getJoin();
+        $arr[]  = $this->getGroupBy();
+        $arr[]  = $this->getOrderBy();
+        $sql = 'select ';
+        $allParams = [];
+        foreach ($arr as $key=>$value) {
+            if (count($value) == 2) {
+                list($str, $params) = $value;
+                $sql .=  $str;
+                $allParams = ArrayLib::array_add($allParams, $params);
+
+            }
+        }
+        return [$sql, $allParams];
     }
 
     /**
@@ -765,12 +821,28 @@ class PdoQuery
      */
     public function getDeleteRawSqlPart()
     {
-        $table      = $this->getFrom();
-        $strWhere   = $this->getWhere();
-        $strJoin    = $this->getJoin();
-        $strOrderBy = $this->getOrderBy();
-        $sql = "delete from {$table}{$strWhere}{$strOrderBy}";
-        return $sql;
+//        $table      = $this->getFrom();
+//        $strWhere   = $this->getWhere();
+//        $strJoin    = $this->getJoin();
+//        $strOrderBy = $this->getOrderBy();
+//        $sql = "delete from {$table}{$strWhere}{$strOrderBy}";
+//        return $sql;
+
+        $arr[]  = ['from ? ',[$this->getFrom()]];
+        $arr[]  = $this->getWhere();
+        $arr[]  = $this->getJoin();
+        $arr[]  = $this->getOrderBy();
+        $sql = 'delete ';
+        $allParams = [];
+        foreach ($arr as $key=>$value) {
+            if (count($value) == 2) {
+                list($str, $params) = $value;
+                $sql .=  $str;
+                $allParams = ArrayLib::array_add($allParams, $params);
+
+            }
+        }
+        return [$sql, $allParams];
     }
 
     /**
