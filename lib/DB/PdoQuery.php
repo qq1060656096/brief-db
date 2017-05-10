@@ -186,18 +186,22 @@ class PdoQuery
     public function getSelect()
     {
         $str = '';
+        $params = [];
         switch (true) {
             case is_array($this->select):
-                $str = implode(',', $this->select);
+                $str = implode(',', array_pad([], count($this->select), '?'));
+                $params   = $this->select;
                 break;
             case is_string($this->select):
-                $str = $this->select;
+                $str        = '?';
+                $params[]   = $this->select;
                 break;
             default:
-                $str = '*';
+                $str = '?';
+                $params[] = '*';
                 break;
         }
-        return $str;
+        return [$str, $params];
     }
     /**
      * 设置查询[select]字段
@@ -374,8 +378,7 @@ class PdoQuery
      */
     public function getWhere()
     {
-        $strWhere = $this->where ? ' where '.$this->where : '';
-        return $strWhere;
+        return $this->where;
     }
 
     /**
@@ -445,17 +448,12 @@ class PdoQuery
         $params = [];
         switch (true) {
             case is_array($var):
-                $arrIn = [];
-                foreach ($var as $key => $value) {
-                    $arrIn[] = $value;
-                }
-                $str = implode(",", array_pad('', count($arrIn), '?'));
-                $str ? $str = '('.$str.')' : null;
+                $str = implode(",", array_pad([], count($var), '?'));
                 $params = $var;
                 break;
             case is_numeric($var):
             case is_string($var):
-                $str    = '(?)';
+                $str    = '?';
                 $params[] = $var;
                 break;
             default:
@@ -519,14 +517,23 @@ class PdoQuery
                         $value = $row['rawValue'];
                     } elseif ($op == self::WHERE_OP_IN) {
                          $value = $this->convertToWhereIn($value);
-                    }else{
+                    } else {
 
                     }
-                    $tmp = implode(" ", ['?', '?', '?']);
-                    $params[] = $key;
-                    $params[] = $op;
-                    $params[] = $value;
-                    $whereStr .= empty($whereStr) ? $tmp : " $on ".$tmp;
+                    // where in操作
+                    if (!isset($row['rawValue']) && $op == self::WHERE_OP_IN) {
+                        list($row_in_str, $row_in_params) = $value;
+                        if ($row_in_str) {
+                            $tmp    = implode(" ", [$key, $op, "({$row_in_str})"]);
+                            $params = ArrayLib::array_add($params, $row_in_params);
+                            $whereStr .= empty($whereStr) ? $tmp : " $on ".$tmp;
+                        }
+                    } else {
+                        $tmp = implode(" ", [$key, $op, '?']);
+                        $params[] = $value;
+                        $whereStr .= empty($whereStr) ? $tmp : " $on ".$tmp;
+                    }
+
                 }
                 return [$whereStr, $params];
                 break;
