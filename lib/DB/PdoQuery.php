@@ -8,7 +8,14 @@ use Wei\Base\Exception\QueryException;
 
 class PdoQuery
 {
-
+    /**
+     * 倒序
+     */
+    const SORT_DESC = 'desc';
+    /**
+     * 顺序
+     */
+    const SORT_ASC = 'asc';
 
     /**
      * and条件
@@ -328,7 +335,6 @@ class PdoQuery
             default:
                 break;
         }
-        $str ? $str = " {$str}" : null;
         return $str;
     }
 
@@ -554,21 +560,27 @@ class PdoQuery
      */
     public function parseGoupBy($groupBy)
     {
+        $params = [];
        switch (true) {
            case is_array($groupBy):
+               $inArr = ['desc', 'asc'];
                foreach ($groupBy as $key => $row) {
-                   $arr[] = is_array($row) ? $this->parseGoupBy($row): "$row";
+                   if (is_numeric($key)) {
+                       $params[] = is_array($row) ? $this->parseGoupBy($row): "$row";
+                   } else if(is_string($key) && in_array(strtolower(trim($row)), $inArr)) {
+                       $params[] = "$key {$row}";
+                   }
                }
                break;
            case is_string($groupBy):
            case is_numeric($groupBy):
-                $arr = preg_split('/\s*,\s*/', trim($groupBy), -1, PREG_SPLIT_NO_EMPTY);
+                $params = preg_split('/\s*,\s*/', trim($groupBy), -1, PREG_SPLIT_NO_EMPTY);
                 break;
            default:
                throw new QueryException('', QueryException::GROUP_BY_NOT_PARSE);//解析失败
                break;
        }
-       return $arr;
+       return $params;
     }
 
     /**
@@ -587,7 +599,7 @@ class PdoQuery
                 {
                     $params[] = $row;
                 }
-                $str = implode(" ", array_pad([], count($params), '?'));
+                $str = implode(",", array_pad([], count($params), '?'));
                 break;
             case is_string($this->groupBy):
                 $str        = '?';
@@ -596,7 +608,7 @@ class PdoQuery
             default:
                 break;
         }
-        $str ? $str = " group by {$str}" : null;
+        $str ? $str = "group by {$str}" : null;
         return [$str, $params];
     }
 
@@ -623,14 +635,8 @@ class PdoQuery
     public function addGroupBy($groupBy)
     {
         $arr = $this->parseGoupBy($groupBy);
-        $str    = '';
-        $params = [];
-        if ($arr) {
-            list($str, $params) = $arr;
-        }
         if ($this->groupBy) {
-            list($oldStr, $oldParams) = $this->groupBy;
-            $this->where = [$oldStr.' , '.$str, ArrayLib::array_add($oldParams, $params)];
+            $this->groupBy = ArrayLib::array_add($this->groupBy, $arr);
         }
         return $this;
     }
@@ -649,10 +655,10 @@ class PdoQuery
                 foreach ($orderBy as $key => $row) {
                     if(is_array($row)){
                         $arr[] = is_array($row) ? $this->parseOrderBy($row) : null;
+                    } elseif(is_numeric($key)) {
+                        $arr[] = "$row";
                     } elseif (is_string($key)) {
                         $arr[] = "{$key} $row";
-                    } else {
-                        $arr[] = "$row";
                     }
                 }
                 break;
@@ -682,7 +688,7 @@ class PdoQuery
                 {
                     $params[] = $row;
                 }
-                $str = implode(" ", array_pad([], count($params), '?'));
+                $str = implode(",", array_pad([], count($params), '?'));
                 break;
             case is_string($this->orderBy):
                 $str        = '?';
@@ -691,7 +697,7 @@ class PdoQuery
             default:
                 break;
         }
-        $str ? $str = " order by {$str}" : null;
+        $str ? $str = "order by {$str}" : null;
         return [$str, $params];
     }
 
@@ -991,11 +997,11 @@ class PdoQuery
         //获取插入字段
         $fields         = array_keys(current($rows));
         //插入行字符串
-        $insertRowStr   = implode(',', array_pad([], count($fields,'?')));
+        $insertRowStr   = implode(',', array_pad([], count($fields),'?'));
         $is_set_value   = false;
         //插入的所有值
         $params         = $fields;
-        array_unshift($params, $table);
+//        array_unshift($params, $table);
         //插入字符串
         $insertStrArr   = [];
         foreach ($rows as $key=> $row) {
@@ -1004,22 +1010,29 @@ class PdoQuery
             }
             $is_set_value   = true;
             foreach ($row as $field => $value) {
-                if (isset($value['raw'])) {
-                    $params[] = $value['raw'];
-                } else {
-                    $params[] = $value;
-                }
+                $params[] = $value;
             }
             $insertStrArr[] = '('.$insertRowStr.')';
 
         }
-//        $strFields      = implode(',', $fields);
-//        $strFields      = $strFields ? '('.$strFields.')' : '';
-//        $strRowsValue   = implode(',', $rowsValue);
-//        $sql = "insert into {$table}{$strFields} values{$strRowsValue}";
         $insertStr = implode(',', $insertStrArr);
-        $sql = "insert into ? {$insertRowStr} values{$insertStr}";
-        return $this->getDB($db)->executeQuery($sql, $params);
+        $sql = "insert into ?({$insertRowStr}) values{$insertStr}";
+//        $result = $this->getDB($db)->executeQuery($sql,$params);
+
+        $stmt = $this->getDB($db)->prepare($sql);
+        $stmt->bindValue(null, $table);
+        foreach ($params as $name => $value) {
+            if (isset($types[$name])) {
+                $type = $types[$name];
+                list($value, $bindingType) = $this->getBindingInfo($value, $type);
+                $stmt->bindValue($name, $value, $bindingType);
+            } else {
+                $stmt->bindValue($name, $value);
+            }
+        }
+
+        $result = $stmt->execute();
+        return $result;
     }
 
     /**
