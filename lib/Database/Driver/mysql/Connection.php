@@ -1,8 +1,9 @@
 <?php
-namespace Wei\Base\DB;
+namespace Wei\Base\Database\Driver\mysql;
 
 use Doctrine\DBAL\DriverManager;
 use Wei\Base\Config\Config;
+use Wei\Base\Database\Query\ConnectionFactor;
 
 /**
  * 数据库连接类
@@ -12,7 +13,7 @@ use Wei\Base\Config\Config;
  * @date 2017-03-31
  *
  * Class Connection
- * @package Wei\Base
+ * @package Wei\Base\Database\Driver\mysql
  */
 class Connection
 {
@@ -27,11 +28,12 @@ class Connection
      */
     private function __construct()
     {
-        $db_user = Config::get('db_user', 'db.php');
-        $db_pass = Config::get('db_pass', 'db.php');
-        $db_host = Config::get('db_host', 'db.php');
-        $db_port = Config::get('db_port', 'db.php');
-        $db_name = Config::get('db_name', 'db.php');
+        $config     = Config::get(ConnectionFactor::getConnectionName(), 'db.php');
+        $db_user    = $config['db_user'];
+        $db_pass    = $config['db_pass'];
+        $db_host    = $config['db_host'];
+        $db_port    = $config['db_port'];
+        $db_name    = $config['db_name'];
         //主从配置
         $config = array(
             'wrapperClass' => 'Doctrine\DBAL\Connections\MasterSlaveConnection',
