@@ -9,6 +9,8 @@ namespace Wei\Base\Database\Query;
 abstract class Query
 {
 
+    protected $table = null;
+
     /**
      * 数据库连接
      *
@@ -25,4 +27,14 @@ abstract class Query
         $this->connection = $connection;
     }
 
+    /**
+     * 设置表名
+     *
+     * @param string $table 表名
+     * @return $this
+     */
+    public function from($table) {
+        $this->table = $table;
+        return $this;
+    }
 }

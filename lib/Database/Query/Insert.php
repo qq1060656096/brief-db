@@ -10,12 +10,6 @@ use Exception;
  */
 class Insert extends Query {
 
-  /**
-   * The table on which to insert.
-   *
-   * @var string
-   */
-  protected $table;
 
   /**
    * An array of fields on which to insert.
@@ -24,12 +18,7 @@ class Insert extends Query {
    */
   protected $insertFields = array();
 
-  /**
-   * An array of fields that should be set to their database-defined defaults.
-   *
-   * @var array
-   */
-  protected $defaultFields = array();
+
 
   /**
    * A nested array of values to insert.
@@ -48,67 +37,10 @@ class Insert extends Query {
    */
   protected $insertValues = array();
 
-  /**
-   * A SelectQuery object to fetch the rows that should be inserted.
-   *
-   * @var SelectQueryInterface
-   */
-  protected $fromQuery;
 
-  /**
-   * Constructs an Insert object.
-   *
-   * @param Drupal\Core\Database\Connection $connection
-   *   A DatabaseConnection object.
-   * @param string $table
-   *   Name of the table to associate with this query.
-   * @param array $options
-   *   Array of database options.
-   */
-  public function __construct($connection, $table, array $options = array()) {
-    if (!isset($options['return'])) {
-      $options['return'] = Database::RETURN_INSERT_ID;
-    }
-    parent::__construct($connection, $options);
-    $this->table = $table;
-  }
 
-  /**
-   * Adds a set of field->value pairs to be inserted.
-   *
-   * This method may only be called once. Calling it a second time will be
-   * ignored. To queue up multiple sets of values to be inserted at once,
-   * use the values() method.
-   *
-   * @param $fields
-   *   An array of fields on which to insert. This array may be indexed or
-   *   associative. If indexed, the array is taken to be the list of fields.
-   *   If associative, the keys of the array are taken to be the fields and
-   *   the values are taken to be corresponding values to insert. If a
-   *   $values argument is provided, $fields must be indexed.
-   * @param $values
-   *   An array of fields to insert into the database. The values must be
-   *   specified in the same order as the $fields array.
-   *
-   * @return Drupal\Core\Database\Query\Insert
-   *   The called object.
-   */
-  public function fields(array $fields, array $values = array()) {
-    if (empty($this->insertFields)) {
-      if (empty($values)) {
-        if (!is_numeric(key($fields))) {
-          $values = array_values($fields);
-          $fields = array_keys($fields);
-        }
-      }
-      $this->insertFields = $fields;
-      if (!empty($values)) {
-        $this->insertValues[] = $values;
-      }
-    }
 
-    return $this;
-  }
+
 
   /**
    * Adds another set of values to the query to be inserted.
@@ -133,7 +65,6 @@ class Insert extends Query {
       foreach ($this->insertFields as $key) {
         $insert_values[$key] = $values[$key];
       }
-      // For consistency, the values array is always numerically indexed.
       $this->insertValues[] = array_values($insert_values);
     }
     return $this;
@@ -256,42 +187,4 @@ class Insert extends Query {
     return $comments . 'INSERT INTO {' . $this->table . '} (' . implode(', ', $insert_fields) . ') VALUES (' . implode(', ', $placeholders) . ')';
   }
 
-  /**
-   * Preprocesses and validates the query.
-   *
-   * @return
-   *   TRUE if the validation was successful, FALSE if not.
-   *
-   * @throws Drupal\Core\Database\Query\FieldsOverlapException
-   * @throws Drupal\Core\Database\Query\NoFieldsException
-   */
-  public function preExecute() {
-    // Confirm that the user did not try to specify an identical
-    // field and default field.
-    if (array_intersect($this->insertFields, $this->defaultFields)) {
-      throw new FieldsOverlapException('You may not specify the same field to have a value and a schema-default value.');
-    }
-
-    if (!empty($this->fromQuery)) {
-      // We have to assume that the used aliases match the insert fields.
-      // Regular fields are added to the query before expressions, maintain the
-      // same order for the insert fields.
-      // This behavior can be overridden by calling fields() manually as only the
-      // first call to fields() does have an effect.
-      $this->fields(array_merge(array_keys($this->fromQuery->getFields()), array_keys($this->fromQuery->getExpressions())));
-    }
-
-    // Don't execute query without fields.
-    if (count($this->insertFields) + count($this->defaultFields) == 0) {
-      throw new NoFieldsException('There are no fields available to insert with.');
-    }
-
-    // If no values have been added, silently ignore this query. This can happen
-    // if values are added conditionally, so we don't want to throw an
-    // exception.
-    if (!isset($this->insertValues[0]) && count($this->insertFields) > 0 && empty($this->fromQuery)) {
-      return FALSE;
-    }
-    return TRUE;
-  }
 }

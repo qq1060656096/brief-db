@@ -2,7 +2,7 @@
 namespace Wei\Base\Database\Query;
 
 use Wei\Base\Common\ArrayLib;
-
+use Doctrine\DBAL\Connections\MasterSlaveConnection;
 
 /**
  * 更新
@@ -12,13 +12,6 @@ use Wei\Base\Common\ArrayLib;
  */
 class Update extends Query
 {
-
-    /**
-     * 表名
-     *
-     * @var string
-     */
-    protected $table;
 
 
     /**
@@ -104,36 +97,50 @@ class Update extends Query
         $setFragment    = [];
         $arguments      = [];
         foreach ($data as $key => $value) {
-            $operator   = isset($value['operator']) ? $value['operator'] : '=';
-            unset($value['operator']);
-            $field      = isset($value['field']) ? $value['field'] : $key;
-            unset($value['field']);
-            $value      = isset($value['value']) ? $value['value'] : $value;
-            unset($value['field']);
+            $operator   = '=';
+            if (isset($value['operator'])) {
+                $operator = $value['operator'];
+                unset($value['operator']);
+            }
+            $field      = $key;
+            if (isset($value['field'])) {
+                $field = $value['field'];
+                unset($value['field']);
+            }
+            $value      = $value;
+            if (isset($value['value'])) {
+                $value = $value['value'];
+                unset($value['value']);
+            }
 
             $setFragment[]  = "{$field} {$operator} ?";
-            $arguments[]    = $value['value'];
+            $arguments[]    = $value;
         }
         $this->setString = implode(',', $setFragment);
         $this->arguments = $arguments;
         return [$setFragment, $arguments];
     }
 
+
     /**
-     * @param array $data
+     * 新增数据
+     *
+     * @param array $data 数据
+     * @return 成功返回受影响行数,否者失败
      */
     public function save($data)
     {
-        $sql = "UPDATE ? SET {$this->setString}";
-        array_unshift($this->arguments, $this->table);
+        $this->compileData($data);
+        $arguments      = $this->arguments;
+        $sql            = 'UPDATE '.$this->table.' SET '.$this->setString;
         //设置了条件
         if ($this->condition->count() > 0) {
             $whereStr       = (string)$this->condition->compile();
             $whereArguments = $this->condition->arguments();
-            $sql = $sql.' '.$whereStr;
-            ArrayLib::array_add($this->arguments, $whereArguments);
+            $sql            = $sql.' where '.$whereStr;
+            $arguments      = ArrayLib::array_add($arguments, $whereArguments);
         }
-        print_r(get_defined_vars());
+        return $this->connection->executeQuery($sql, $arguments);
     }
 
 }

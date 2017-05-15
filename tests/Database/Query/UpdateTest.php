@@ -9,11 +9,14 @@ class UpdateTest extends WeiTestCase
 {
     public function test()
     {
-        print_r(ConnectionFactor::getInstance());
+
         $obj = new Update(ConnectionFactor::getInstance(), 'test');
-        $obj->condition('id', 1);
-        $obj->save(['id' => '2']);
-        print_r($obj);
+        $obj->condition('`name`', '20170515--2122');
+        ConnectionFactor::enabledSqlLog();
+        $obj->from('test');
+        $obj->save(['age' => '201705152143']);
+
+        print_r(ConnectionFactor::getLastRawSql());
         $this->assertTrue(true);
     }
 }
