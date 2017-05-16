@@ -152,13 +152,9 @@ class ArrayLib
      * @param array $arr2
      * @return array
      */
-    public static function array_add($arr1, $arr2)
+    public static function array_add(array $arr1, array $arr2)
     {
-        $newArr = [];
-        foreach ($arr1 as $key => $value) {
-            $newArr[] = $value;
-        }
-
+        $newArr = $arr1 ? $arr1 : [];
         foreach ($arr2 as $key => $value) {
             $newArr[] = $value;
         }

@@ -2,7 +2,7 @@
 namespace Wei\Base\Database\Query;
 
 use Wei\Base\Common\ArrayLib;
-use Doctrine\DBAL\Connections\MasterSlaveConnection;
+use Doctrine\DBAL\Connection;
 
 /**
  * 更新
@@ -27,65 +27,20 @@ class Update extends Query
      */
     protected $setString = null;
 
-    /**
-     * 条件
-     *
-     * @var ConditionAbstract
-     */
-    protected $condition;
+
 
     /**
      * 初始化
-     * @param \Doctrine\DBAL\Connections\MasterSlaveConnection $connection
+     * @param \Doctrine\DBAL\Connection $connection 数据库连接
      * @param string $table 表名
      */
-    public function __construct(MasterSlaveConnection $connection, $table)
+    public function __construct(Connection $connection, $table)
     {
-        $this->connection = $connection;
+        parent::__construct($connection);
         $this->table = $table;
         $this->condition = new Condition('AND');
     }
 
-    /**
-     * 添加条件
-     *
-     * @param string $field 字段
-     * @param string|integer|float $value 字段值
-     * @param mixed $expressionOperator 表达式操作符(=,>=,in等)
-     * @return $this
-     */
-    public function condition($field, $value = NULL, $operator = NULL)
-    {
-        $this->condition->condition($field, $value, $operator);
-        return $this;
-    }
-
-    /**
-     * 添加复杂的条件
-     *
-     * @param string|Condition $snippet 小片段
-     * @param array|null $args 参数
-     * @return $this
-     */
-    public function conditionComplex($snippet, $args)
-    {
-        $this->condition->conditionComplex($snippet, $args);
-        return $this;
-    }
-
-    /**
-     * 字段不为null
-     */
-    public function isNull($field) {
-        return $this->condition->condition($field, NULL, 'IS NULL');
-    }
-
-    /**
-     * 字段为null
-     */
-    public function isNotNull($field) {
-        return $this->condition->condition($field, NULL, 'IS NOT NULL');
-    }
 
     /**
      * 编译data数据
@@ -112,9 +67,16 @@ class Update extends Query
                 $value = $value['value'];
                 unset($value['value']);
             }
+            //设置自定义set
+            if (!isset($value['setRaw'])) {
+                $setFragment[]  = "{$field} {$operator} ?";
+                $arguments[]    = $value;
+            } else {
+                $setFragment[]  = "{$field} {$operator} {$value['setRaw']}";
+                is_array($value) ?null : $value = [$value];
+                $arguments = ArrayLib::array_add($arguments, $value);
+            }
 
-            $setFragment[]  = "{$field} {$operator} ?";
-            $arguments[]    = $value;
         }
         $this->setString = implode(',', $setFragment);
         $this->arguments = $arguments;
@@ -123,12 +85,12 @@ class Update extends Query
 
 
     /**
-     * 新增数据
+     * 更新数据
      *
      * @param array $data 数据
      * @return 成功返回受影响行数,否者失败
      */
-    public function save($data)
+    public function update(array $data)
     {
         $this->compileData($data);
         $arguments      = $this->arguments;
@@ -143,4 +105,44 @@ class Update extends Query
         return $this->connection->executeQuery($sql, $arguments);
     }
 
+    /**
+     * 批量更新
+     *
+     * @param BatchUpdate $batchUpdate 批量更新类
+     * @param bool $strict 严格模式(默认false,如果是true严格模式,必须全部保存都有受影响行数才会保存成功)
+     * @return bool|int
+     */
+    public function updateAll(BatchUpdate $batchUpdate, $strict = false)
+    {
+        $data       = $batchUpdate->getData();
+        $count      = count($data);
+        $saveCount  = 0;
+        $this->connection->beginTransaction();
+        foreach ($data as $key => $row) {
+            /* @var $condition \Wei\Base\Database\Query\Update */
+            list($condition, $saveData) = $row;
+            $obj = new Update($this->connection, $this->table);
+            $obj->conditionComplex((string)$condition, $condition->arguments());
+            $result = $obj->update($saveData);
+            $result ? $saveCount++ : null;
+
+        }
+
+        switch (true) {
+            // 普通模式
+            case $strict === false:
+                $this->connection->commit();
+                break;
+            // 严格模式必须全部有更新才会保存
+            case $saveCount == $count:
+                $this->connection->commit();
+                break;
+            // 严格模式保存失败
+            default:
+                $this->connection->rollBack();
+                return false;
+                break;
+        }
+        return $saveCount;
+    }
 }

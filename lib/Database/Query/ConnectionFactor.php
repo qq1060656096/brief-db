@@ -39,7 +39,7 @@ class ConnectionFactor
     /**
      * 获取数据库连接
      * @param string $connection 连接名
-     * @return \Doctrine\DBAL\Connections\MasterSlaveConnection
+     * @return \Doctrine\DBAL\Connection
      */
     public static function getInstance($connectionName = 'default')
     {

@@ -36,25 +36,12 @@ class Connection
         $db_name    = $config['db_name'];
         //主从配置
         $config = array(
-            'wrapperClass' => 'Doctrine\DBAL\Connections\MasterSlaveConnection',
             'driver' => 'pdo_mysql',
-            'master' => array(
-                'user'      => $db_user,
-                'password'  => $db_pass,
-                'host'      => $db_host,
-                'port'      => $db_port,
-                'dbname'    => $db_name
-            ),
-            'slaves' => array(
-                array(
-                    'user'      => $db_user,
-                    'password'  => $db_pass,
-                    'host'      => $db_host,
-                    'port'      => $db_port,
-                    'dbname'    => $db_name
-                ),
-            ),
-            'keepSlave'=>true,//注意保持从数据库连接
+            'user'      => $db_user,
+            'password'  => $db_pass,
+            'host'      => $db_host,
+            'port'      => $db_port,
+            'dbname'    => $db_name
         );
 
         $conn = DriverManager::getConnection($config);

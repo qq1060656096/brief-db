@@ -1,5 +1,8 @@
 <?php
 namespace Wei\Base\Database\Query;
+
+use Doctrine\DBAL\Connection;
+
 /**
  * 查询抽象类
  *
@@ -8,19 +11,29 @@ namespace Wei\Base\Database\Query;
  */
 abstract class Query
 {
-
+    /**
+     * 表名
+     * @var null
+     */
     protected $table = null;
 
     /**
      * 数据库连接
      *
-     * @var \Doctrine\DBAL\Connections\MasterSlaveConnection
+     * @var \Doctrine\DBAL\Connection
      */
     protected $connection;
 
     /**
+     * 条件
+     *
+     * @var ConditionAbstract
+     */
+    protected $condition;
+
+    /**
      * 初始化
-     * @param \Doctrine\DBAL\Connections\MasterSlaveConnection $connection
+     * @param \Doctrine\DBAL\Connection $connection 数据库连接
      */
     public function __construct(Connection $connection)
     {
@@ -37,4 +50,46 @@ abstract class Query
         $this->table = $table;
         return $this;
     }
+
+    /**
+     * 添加条件
+     *
+     * @param string $field 字段
+     * @param string|integer|float $value 字段值
+     * @param mixed $expressionOperator 表达式操作符(=,>=,in等)
+     * @return $this
+     */
+    public function condition($field, $value = NULL, $operator = NULL)
+    {
+        $this->condition->condition($field, $value, $operator);
+        return $this;
+    }
+
+    /**
+     * 添加复杂的条件
+     *
+     * @param string|Condition $snippet 小片段
+     * @param array|null $args 参数
+     * @return $this
+     */
+    public function conditionComplex($snippet, $args)
+    {
+        $this->condition->conditionComplex($snippet, $args);
+        return $this;
+    }
+
+    /**
+     * 字段不为null
+     */
+    public function isNull($field) {
+        return $this->condition->condition($field, NULL, 'IS NULL');
+    }
+
+    /**
+     * 字段为null
+     */
+    public function isNotNull($field) {
+        return $this->condition->condition($field, NULL, 'IS NOT NULL');
+    }
+
 }
