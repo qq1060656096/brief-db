@@ -14,7 +14,7 @@ class ArrayLib
      * @param integer $number 随机值数量
      * @return array 
      */
-    public static function array_rand_values($array, $number)
+    public static function array_rand_values(array $array, $number)
     {
         if (!is_array($array)) {
             return array();
@@ -41,7 +41,7 @@ class ArrayLib
      * @param array $array
      * @return string
      */
-    public static function array_to_key($array)
+    public static function array_to_key(array $array)
     {
         $key = md5(serialize( $array ));
         return $key;
@@ -53,7 +53,7 @@ class ArrayLib
      * @param string $row_field_name
      * @return array
      */
-    public static function array_row_field_to_key($array, $row_field_name )
+    public static function array_row_field_to_key(array $array, $row_field_name )
     {
         if (!is_array($array)) {
             return array();
@@ -77,7 +77,7 @@ class ArrayLib
      * @param integer $pageSize
      * @return array
      */
-    public static function array_page($array, $page=1, $pageSize=10)
+    public static function array_page(array $array, $page=1, $pageSize=10)
     {
         if (!is_array($array)) {
             return array();
@@ -101,7 +101,7 @@ class ArrayLib
      * @param string $sub_items_name 子树名
      * @return array
      */
-    public static function array_to_tree($array, $sub_field_name, $parent_field_name, $parent_value, $sub_items_name)
+    public static function array_to_tree(array $array, $sub_field_name, $parent_field_name, $parent_value, $sub_items_name)
     {
         if (!is_array($array)) {
             return array();
@@ -132,7 +132,7 @@ class ArrayLib
      * @param array $array 数组
      * @return boolean keys存在数组中,返回true,否者false
      */
-    public static function array_keys_exists($keys, $array )
+    public static function array_keys_exists(array $keys,array $array )
     {
         //键不是数组直接返回false
         if (!is_array($keys)) {

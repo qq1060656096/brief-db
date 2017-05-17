@@ -13,14 +13,21 @@ use Wei\Base\Tests\WeiTestCase;
 class ConnectionFactorTest extends WeiTestCase
 {
     /**
-     * 测试
+     * 测试数据库多连接
      */
-    public function test()
+    public function testMultiGetInstance()
     {
+        //获取 mysql数据库连接
+        ConnectionFactor::getInstance('default');
+
+        //获取 sqlite数据库连接
         ConnectionFactor::getInstance('sqlite');
-        print_r(ConnectionFactor::getCurrentConnectionName());
-        $class = new \ReflectionClass(ConnectionFactor::class);
-        $arr = $class->getStaticProperties();
-        print_r($arr);
+
+        $class  = new \ReflectionClass(ConnectionFactor::class);
+        $arr    = $class->getStaticProperties();
+        $this->assertEquals('sqlite', $arr['currentConnectionName']);
+        $this->assertEquals(2, count($arr['connectionDataInstance']));
+//        print_r($arr['connectionDataInstance']);
+//        print_r($arr['currentConnectionName']);
     }
 }

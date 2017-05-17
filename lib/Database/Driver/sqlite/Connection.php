@@ -25,19 +25,12 @@ class Connection
     private function __construct()
     {
         $config     = Config::get(ConnectionFactor::getCurrentConnectionName(), 'db.php');
-        $db_user    = $config['db_user'];
-        $db_pass    = $config['db_pass'];
-        $db_host    = $config['db_host'];
-        $db_port    = $config['db_port'];
-        $db_name    = $config['db_name'];
         //主从配置
         $config = array(
-            'driver' => 'pdo_mysql',
-            'user'      => $db_user,
-            'password'  => $db_pass,
-            'host'      => $db_host,
-            'port'      => $db_port,
-            'dbname'    => $db_name
+            'driver' => 'pdo_sqlite',
+            'user'      => $config['user'],// 账户
+            'password'  => $config['password'],// 密码
+            'path'      => $config['path'],// sqlite数据库路径
         );
 
         $conn = DriverManager::getConnection($config);

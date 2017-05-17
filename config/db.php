@@ -12,9 +12,9 @@ return [
     ],
     'sqlite' => [
         'driver'    => 'sqlite',// sqlite驱动类型
-        'user'      => '',// 账户
-        'password'  => '',// 密码
-        'path'      => '',// sqlite数据库路径
+        'user'      => 'root',// 账户
+        'password'  => 'root',// 密码
+        'path'      => __DIR__.'/sqlite/sqlite.db.php',// sqlite数据库路径
         'memory'    => false,
     ],
 ];
