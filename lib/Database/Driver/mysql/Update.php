@@ -98,6 +98,8 @@ class Update extends \Wei\Base\Database\Query\Update
             $obj->conditionComplex((string)$condition, $condition->arguments());
             $result = $obj->update($saveData);
             $result ? $saveCount++ : null;
+            //严格模式下直接退出
+            if($strict && !$result) break;
 
         }
 

@@ -1,19 +1,15 @@
 <?php
-namespace Wei\Base\Database\Driver\mysql;
+namespace Wei\Base\Database\Driver\sqlite;
 
 use Doctrine\DBAL\DriverManager;
 use Wei\Base\Config\Config;
 use Wei\Base\Database\Query\ConnectionFactor;
 
 /**
- * mysql数据库连接类
- *
- * @author zhao wei jie
- * @email 1060656096@qq.com
- * @date 2017-03-31
+ * sqlite数据库连接类
  *
  * Class Connection
- * @package Wei\Base\Database\Driver\mysql
+ * @package Wei\Base\Database\Driver\sqlite
  */
 class Connection
 {
@@ -29,14 +25,19 @@ class Connection
     private function __construct()
     {
         $config     = Config::get(ConnectionFactor::getCurrentConnectionName(), 'db.php');
+        $db_user    = $config['db_user'];
+        $db_pass    = $config['db_pass'];
+        $db_host    = $config['db_host'];
+        $db_port    = $config['db_port'];
+        $db_name    = $config['db_name'];
         //主从配置
         $config = array(
             'driver' => 'pdo_mysql',
-            'user'      => $config['user'],
-            'password'  => $config['password'],
-            'host'      => $config['host'],
-            'port'      => $config['port'],
-            'dbname'    => $config['dbname']
+            'user'      => $db_user,
+            'password'  => $db_pass,
+            'host'      => $db_host,
+            'port'      => $db_port,
+            'dbname'    => $db_name
         );
 
         $conn = DriverManager::getConnection($config);

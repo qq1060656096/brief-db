@@ -2,6 +2,7 @@
 namespace Wei\Base\Database\Query;
 
 use Doctrine\DBAL\Connection;
+use Wei\Base\Common\ArrayLib;
 use Wei\Base\Exception\BaseException;
 
 /**
@@ -13,29 +14,29 @@ class Select extends Query
 {
     /**
      * 查询字段
-     * @var null
+     * @var array()
      */
-    protected $fields = null;
+    protected $fields = array();
 
     /**
      * 关联查询
      *
-     * @var null: array
+     * @var array
      */
-    public $join = null;
+    public $join = array();
 
     /**
      * 查询分组
      *
-     * @var null|array
+     * @var array
      */
-    public $groupBy = null;
+    public $group = array();
 
     /**
      * 排序
-     * @var null|string
+     * @var array
      */
-    public $orderBy = null;
+    public $order = array();
 
 
     /**
@@ -71,8 +72,17 @@ class Select extends Query
      */
     public function fields($fields)
     {
-        $this->fields = $this->parseFields($fields);
+        $this->addFields($fields);
         return $this;
+    }
+
+    /**
+     * 获取字段细信息
+     * @return array
+     */
+    public function getFields()
+    {
+        return $this->fields;
     }
     /**
      * 添加查询[select]字段
@@ -83,10 +93,9 @@ class Select extends Query
      */
     public function addFields($fields)
     {
-        $selectFields = $this->parseFields($fields);
-        if ($selectFields) {
-            $this->fields = $this->select ? array_merge($this->select, $selectFields) : $selectFields;
-        }
+        $fieldsArr = $this->parseFields($fields);
+        !is_array($this->fields) ? $this->fields = [] : null;
+        $this->fields = array_unique(ArrayLib::array_add($this->fields, $fieldsArr));
         return $this;
     }
 
@@ -104,285 +113,128 @@ class Select extends Query
                 $fields = array_values($fields);
                 break;
             case is_string($fields):
-                $arr = preg_split('/\s*,\s*/', trim($fields), -1, PREG_SPLIT_NO_EMPTY);
-                $fields = array_unique($arr);
+                $fields = preg_split('/\s*,\s*/', trim($fields), -1, PREG_SPLIT_NO_EMPTY);
                 break;
             default:
                 throw new QueryException('', QueryException::SELECT_NOT_PARSE);
                 break;
         }
-        return $fields;
+        return $fields ? $fields :[];
     }
 
 
-
     /**
-     * 添加关联查询
+     * 关联查询
      *
      * @param string $type 关联类型
-     * @see Query::RIGHT_JOIN
-     * @see Query::LEFT_JOIN
      * @param string $table 表名
-     * @param string $on 关联字段
+     * @param string $condition 关联条件(on条件)
+     * @param array $arguments 参数
      * @return $this
      */
-    public function join($type, $table, $on = '')
+    public function join($type, $table, $condition, $arguments = array())
     {
-        $this->join[] = [$type, $table, $on];
+        $this->join[] = [
+            'type' => $type,
+            'table' => $table,
+            'condition' => $condition,
+            'arguments' => $arguments,
+        ];
         return $this;
     }
 
     /**
-     * 获取关联[join]
+     * 内联查询
      *
-     * @return string
+     * @param string $type 关联类型
+     * @param string $table 表名
+     * @param string $condition 关联条件(on条件)
+     * @param array $arguments 参数
+     * @return $this
+     */
+    public function innerJoin($table, $condition, $arguments = array())
+    {
+        return $this->join('INNER JOIN', $table, $condition, $arguments);
+    }
+    /**
+     * 左联查询
+     *
+     * @param string $type 关联类型
+     * @param string $table 表名
+     * @param string $condition 关联条件(on条件)
+     * @param array $arguments 参数
+     * @return $this
+     */
+    public function leftJoin($table, $condition, $arguments = array())
+    {
+        return $this->join('LEFT JOIN', $table, $condition, $arguments);
+    }
+
+    /**
+     * 右联查询
+     *
+     * @param string $type 关联类型
+     * @param string $table 表名
+     * @param string $condition 关联条件(on条件)
+     * @param array $arguments 参数
+     * @return $this
+     */
+    public function rightJoin($table, $condition, $arguments = array())
+    {
+        return $this->join('RIGHT JOIN', $table, $condition, $arguments);
+    }
+
+    /**
+     * 获取关联join
+     *
+     * @return array
      */
     public function getJoin()
     {
-        $str = '';
-        switch (true) {
-            case is_array($this->join):
-                $joinArr = [];
-                foreach ($this->join as $key => $row)
-                {
-                    if (is_array($row) && count($row) == 3) {
-                        list($type, $table, $on) = $row;
-                        $joinArr[] = $on ? "$type $table on {$on}" : "$type $table";
-                    } elseif (is_string($row)) {
-                        $joinArr[] = $row;
-                    }
-                }
-                $str = implode(" ", $joinArr);
-                break;
-            case is_string($this->join):
-                $str = $this->join;
-                break;
-            default:
-                break;
-        }
-        return $str;
+        return $this->join;
     }
 
     /**
-     * 添加内关联查询
+     * 排序查询
      *
-     * @param string $table 表名
-     * @param string $on 关联字段
+     * @param string $field 字段名
+     * @param string $direction 排序类型("ASC和DESC"默认ASC)
      * @return $this
      */
-    public function innerJoin($table, $on = '')
-    {
-        $this->join(self::INNER_JOIN, $table, $on);
+    public function orderBy($field, $direction = 'ASC') {
+        $this->order[$field] = $direction;
         return $this;
-    }
-
-    /**
-     * 添加左关联查询
-     *
-     * @param string $table 表名
-     * @param string $on 关联字段
-     * @return $this
-     */
-    public function leftJoin($table, $on = '')
-    {
-        $this->join(self::LEFT_JOIN, $table, $on);
-        return $this;
-    }
-
-    /**
-     * 添加右关联查询
-     *
-     * @param string $table 表名
-     * @param string $on 关联字段
-     * @return $this
-     */
-    public function rightJoin($table, $on = '')
-    {
-        $this->join(self::RIGHT_JOIN, $table, $on);
-        return $this;
-    }
-
-    /**
-     * 解析SQL分组查询[group by]
-     *
-     * @param string|array $groupBy 分组查询
-     * @return arrray 成功数组,失败抛出异常
-     * @throws QueryException 抛出异常
-     */
-    public function parseGoupBy($groupBy)
-    {
-        $params = [];
-        switch (true) {
-            case is_array($groupBy):
-                $inArr = ['desc', 'asc'];
-                foreach ($groupBy as $key => $row) {
-                    if (is_numeric($key)) {
-                        $params[] = is_array($row) ? $this->parseGoupBy($row): "$row";
-                    } else if(is_string($key) && in_array(strtolower(trim($row)), $inArr)) {
-                        $params[] = "$key {$row}";
-                    }
-                }
-                break;
-            case is_string($groupBy):
-            case is_numeric($groupBy):
-                $params = preg_split('/\s*,\s*/', trim($groupBy), -1, PREG_SPLIT_NO_EMPTY);
-                break;
-            default:
-                throw new QueryException('', QueryException::GROUP_BY_NOT_PARSE);//解析失败
-                break;
-        }
-        return $params;
-    }
-
-    /**
-     * 获取分组查询
-     *
-     * @return string
-     */
-    public function getGroupBy()
-    {
-        $str = '';
-        $params = [];
-        switch (true) {
-            case is_array($this->groupBy):
-
-                foreach ($this->groupBy as $key => $row)
-                {
-                    $params[] = $row;
-                }
-                $str = implode(",", array_pad([], count($params), '?'));
-                break;
-            case is_string($this->groupBy):
-                $str        = '?';
-                $params[]   = $this->groupBy;
-                break;
-            default:
-                break;
-        }
-        $str ? $str = "group by {$str}" : null;
-        return [$str, $params];
-    }
-
-    /**
-     * 设置SQL分组查询[group by]
-     *
-     * @param string|array $groupBy 分组查询
-     * @return $this 失败抛出异常
-     * @throws QueryException
-     */
-    public function groupBy($groupBy)
-    {
-        $this->groupBy = $this->parseGoupBy($groupBy);
-        return $this;
-    }
-
-    /**
-     * 添加SQL分组查询
-     *
-     * @param string|array $groupBy 分组查询
-     * @return $this 失败抛出异常
-     * @throws QueryException 异常
-     */
-    public function addGroupBy($groupBy)
-    {
-        $arr = $this->parseGoupBy($groupBy);
-        if ($this->groupBy) {
-            $this->groupBy = ArrayLib::array_add($this->groupBy, $arr);
-        }
-        return $this;
-    }
-
-    /**
-     * 解析SQL排序[order by]
-     *
-     * @param string|array $groupBy 排序
-     * @return arrray 成功数组,失败抛出异常
-     * @throws QueryException 抛出异常
-     */
-    public function parseOrderBy($orderBy)
-    {
-        switch (true) {
-            case is_array($orderBy):
-                foreach ($orderBy as $key => $row) {
-                    if(is_array($row)){
-                        $arr[] = is_array($row) ? $this->parseOrderBy($row) : null;
-                    } elseif(is_numeric($key)) {
-                        $arr[] = "$row";
-                    } elseif (is_string($key)) {
-                        $arr[] = "{$key} $row";
-                    }
-                }
-                break;
-            case is_string($orderBy):
-            case is_numeric($orderBy):
-                $arr = preg_split('/\s*,\s*/', trim($orderBy), -1, PREG_SPLIT_NO_EMPTY);
-                break;
-            default:
-                throw new QueryException('', QueryException::ORDER_BY_NOT_PARSE);//解析失败
-                break;
-        }
-        return $arr;
     }
 
     /**
      * 获取排序
-     *
-     * @return string
      */
     public function getOrderBy()
     {
-        $str = '';
-        $params = [];
-        switch (true) {
-            case is_array($this->orderBy):
-                foreach ($this->orderBy as $key => $row)
-                {
-                    $params[] = $row;
-                }
-                $str = implode(",", array_pad([], count($params), '?'));
-                break;
-            case is_string($this->orderBy):
-                $str        = '?';
-                $params[]   = $this->orderBy;
-                break;
-            default:
-                break;
-        }
-        $str ? $str = "order by {$str}" : null;
-        return [$str, $params];
+        return $this->order;
     }
 
     /**
-     * 设置SQL排序[order by]
+     * 分组
      *
-     * @param string|array $groupBy 分组查询
-     * @return $this 失败抛出异常
-     * @throws QueryException
+     * @param string $field 字段名
+     * @return $this
      */
-    public function orderBy($orderBy)
+    public function groupBy($field)
     {
-        $this->orderBy = $this->parseOrderBy($orderBy);
+        $this->group[$field] = $field;
         return $this;
     }
 
     /**
-     * 添加SQL分组查询
+     * 获取分组
      *
-     * @param string|array $groupBy 分组查询
-     * @return $this 失败抛出异常
-     * @throws QueryException 异常
+     * @return array
      */
-    public function addOrderBy($orderBy)
+    public function getGroupBy()
     {
-        $arr = $this->parseOrderBy($orderBy);
-        if ($arr) {
-            foreach ($arr as $key => $row) {
-                $this->orderBy[] = $row;
-            }
-        }
-        return $this;
+        return $this->group;
     }
-
     /**
      * 设置偏移
      *
