@@ -249,6 +249,16 @@ class Select extends Query
     }
 
     /**
+     * 获取offset
+     *
+     * @return int
+     */
+    public function getOffset()
+    {
+        return $this->offset;
+    }
+
+    /**
      * 设置显示条数
      *
      * @param integer $limit
@@ -258,5 +268,15 @@ class Select extends Query
     {
         $this->limit = max(0, intval($limit));
         return $this;
+    }
+
+    /**
+     * 获取limit
+     *
+     * @return int
+     */
+    public function getLimit()
+    {
+        return $this->limit;
     }
 }

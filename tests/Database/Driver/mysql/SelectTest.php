@@ -106,4 +106,31 @@ class SelectTest extends WeiTestCase
         ];
         $this->assertEquals($data, $obj->getGroupBy());
     }
+
+    /**
+     * 测试offset
+     */
+    public function testOff()
+    {
+        $obj = new Select(ConnectionFactor::getInstance(), 'test');
+        $obj->offset(20);
+        $this->assertEquals('20', $obj->getOffset());
+        $obj->offset(0);
+        $this->assertEquals('0', $obj->getOffset());
+        $obj->offset(-1);
+        $this->assertEquals('0', $obj->getOffset());
+    }
+    /**
+     * 返回多少条数据
+     */
+    public function testLimit()
+    {
+        $obj = new Select(ConnectionFactor::getInstance(), 'test');
+        $obj->limit(20);
+        $this->assertEquals('20', $obj->getLimit());
+        $obj->limit(0);
+        $this->assertEquals('0', $obj->getLimit());
+        $obj->limit(-1);
+        $this->assertEquals('0', $obj->getLimit());
+    }
 }
