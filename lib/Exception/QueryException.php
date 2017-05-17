@@ -39,5 +39,9 @@ class QueryException extends BaseException
      * 多行更新参数错误
      */
     const UPDATE_ALL_PARAMS_ILLEGAL = 41011;
+    /**
+     * 没有条件不能删除
+     */
+    const DELETE_NOT_WHERE = 41012;
 
 }

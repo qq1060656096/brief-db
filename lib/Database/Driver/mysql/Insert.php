@@ -83,7 +83,7 @@ class Insert extends \Wei\Base\Database\Query\Insert
             $this->arguments = ArrayLib::array_add($this->arguments, $row);
             $this->insertFragment[] = '('.implode(', ', $placeholders).')';
         }
-        $this->insertString = 'INSERT INTO ' . $this->table . ' (' . implode(', ', $this->insertFields) . ') VALUES '.implode(', ', $this->insertFragment);
+        $this->insertString = 'INSERT INTO ' . $this->getFrom() . ' (' . implode(', ', $this->insertFields) . ') VALUES '.implode(', ', $this->insertFragment);
     }
 
     /**
@@ -113,7 +113,7 @@ class Insert extends \Wei\Base\Database\Query\Insert
      */
     public function insert(array $rowValue)
     {
-        return $this->connection->insert($this->table, $rowValue);
+        return $this->connection->insert($this->getFrom(), $rowValue);
     }
 
     /**

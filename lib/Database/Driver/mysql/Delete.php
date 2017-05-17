@@ -1,15 +1,16 @@
 <?php
-namespace Wei\Base\Database\Query;
+namespace Wei\Base\Database\Driver\mysql;
 
-use Doctrine\DBAL\Connection;
 use Wei\Base\Exception\BaseException;
+use Wei\Base\Exception\QueryException;
 
 /**
- * 删除
+ * mysql删除
  *
- * @package Wei\Base\Database\Query
+ * Class Delete
+ * @package Wei\Base\Database\Driver\mysql
  */
-class Delete extends Query
+class Delete extends \Wei\Base\Database\Query\Delete
 {
 
     /**
@@ -23,11 +24,11 @@ class Delete extends Query
 
         //没有设置条件不能删除
         if ($this->condition->count() < 1) {
-            throw new BaseException();
+            throw new BaseException(QueryException::DELETE_NOT_WHERE);
         }
         $whereStr       = (string)$this->condition->compile();
         $whereArguments = $this->condition->arguments();
-        $sql            = "DELETE FROM {$this->table} WHERE ".$whereStr;
+        $sql            = "DELETE FROM {$this->getFrom()} WHERE ".$whereStr;
         return $this->connection->executeUpdate($sql, $whereArguments);
     }
 }

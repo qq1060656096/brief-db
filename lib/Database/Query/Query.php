@@ -92,4 +92,19 @@ abstract class Query
         return $this->condition->condition($field, NULL, 'IS NOT NULL');
     }
 
+    /**
+     * 获取表名
+     *
+     * @return string 成功表名,否则失败
+     * @throws QueryException 抛出异常
+     */
+    public function getFrom()
+    {
+        $table      = $this->table;
+        if (empty($table)) {
+            throw new QueryException('', QueryException::TABLE_NAME_NOT_NULL);
+        }
+        return $table;
+    }
+
 }

@@ -1,9 +1,9 @@
 <?php
 namespace Wei\Base\Tests\Database\Driver\mysql;
 
-use Wei\Base\Database\Driver\mysql\Insert;
+
 use Wei\Base\Database\Query\ConnectionFactor;
-use Wei\Base\Database\Query\Delete;
+use Wei\Base\Database\Driver\mysql\Delete;
 use Wei\Base\Tests\WeiTestCase;
 
 class DeleteTest extends WeiTestCase
