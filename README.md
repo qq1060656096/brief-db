@@ -1,11 +1,10 @@
 # Doctrine Database
 > Doctrine Database 为了减少数据库操作的一些重复工作
 
-
-| 驱动类型  | 驱动名 | 是否支持|
-| -------- |:------- :| -----:|
-| MYSQL    | mysql   |支持   |
-| Sqlite   | sqlite  |暂不支持(未开发) |
+|驱动类型   | 驱动名   | 是否支持  |
+| -------- |:-------:| -------- |
+| MYSQL    | mysql   | 支持      |
+| Sqlite   | sqlite  | 暂不支持(未开发) |
 
 
 ### 1. 获取配置文件
