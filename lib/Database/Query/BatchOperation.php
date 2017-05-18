@@ -1,5 +1,5 @@
 <?php
-namespace Wei\Base\DB;
+namespace Wei\Base\Database\Query;
 
 /**
  * 批量操作
