@@ -89,7 +89,7 @@ ConnectionFactor::getUpdate($connection, DriverName::MYSQL)
     ->from('test')->updateAll($bathUpdate);
     
     
-//查询
+// 查询
 $select = ConnectionFactor::getSelect($connection, DriverName::MYSQL)
     ->fields('name,id')
     ->fields(['uid', 'age'])
@@ -102,7 +102,20 @@ $row = $select->findOne();
 // 查询多行数据
 $rows = $select->findAll();
 // 查询总条数
-$count = $select->findCount();    
+$count = $select->findCount();
+
+// 关联查询
+$select = ConnectionFactor::getSelect(ConnectionFactor::getInstance(), DriverName::MYSQL);
+$select->from('test t1');
+$select->condition('t2.name', 'SelectTest::testFindAll-20170518-1256%', 'like');
+$select->fields('*');
+// 左联查询
+$select->leftJoin('test t2', 'on t2.id = t1.id');
+// 右联查询
+$select->rightJoin('test t3', 'on t3.id = t2.id');
+// 内联查询
+$select->innerJoin('test t4', 'on t4.id = t3.id');
+$select->findAll();
 ```
 
 ### 单元测试使用

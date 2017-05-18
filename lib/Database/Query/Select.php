@@ -382,6 +382,18 @@ class Select extends Query
         $queryArr['from']   = 'FROM';
         $queryArr['table']  = $this->getFrom();
 
+
+
+        $join       = $this->getJoin();
+        $joinArr    = [];
+        foreach ($join as $key => $rowJoin) {
+            $joinArr[] = "{$rowJoin['type']} {$rowJoin['table']} {$rowJoin['condition']}";
+            if (!empty($rowJoin['arguments'])) {
+                $arguments = ArrayLib::array_add($arguments, $rowJoin['arguments']);
+            }
+        }
+        $joinArr ? $queryArr['join'] = implode(" ", $joinArr) : null;
+
         $wherStr = (string) $this->condition;
         $wherStr ? $queryArr['where'] = 'WHERE '. $wherStr : null;
         $wherStr ? $arguments = $this->condition->arguments() : null;

@@ -130,10 +130,25 @@ class ConnectionFactorTest extends WeiTestCase
         // 查询总条数
         $count = $select->findCount();
 
+        //关联查询
+        $select = ConnectionFactor::getSelect(ConnectionFactor::getInstance(), DriverName::MYSQL);
+        $select->from('test t1');
+        $select->condition('t2.name', 'SelectTest::testFindAll-20170518-1256%', 'like');
+        $select->fields('*');
+        // 左联查询
+        $select->leftJoin('test t2', 'on t2.id = t1.id');
+        // 右联查询
+        $select->rightJoin('test t3', 'on t3.id = t2.id');
+        // 内联查询
+        $select->innerJoin('test t4', 'on t4.id = t3.id');
+        $select->findAll();
+
         print_r($row);
         print_r($rows);
         var_dump($count);
 //        var_dump($result);
         print_r(ConnectionFactor::getLastRawSql());
+        $sql = "SELECT * FROM test t1 LEFT JOIN test t2 on t2.id = t1.id RIGHT JOIN test t3 on t3.id = t2.id INNER JOIN test t4 on t4.id = t3.id WHERE t2.name LIKE 'SelectTest::testFindAll-20170518-1256%'";
+        $this->assertEquals($sql, ConnectionFactor::getLastRawSql()['rawSql']);
     }
 }

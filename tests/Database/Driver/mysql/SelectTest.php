@@ -276,6 +276,24 @@ class SelectTest extends WeiTestCase
         $this->assertEquals($values, $result);
     }
 
+    /**
+     * 测试关联查询
+     */
+    public function testJoinSelect()
+    {
+        ConnectionFactor::enabledSqlLog();
+        $obj = new Select(ConnectionFactor::getInstance(), 'test t1');
+        $obj->condition('t2.name', 'SelectTest::testFindAll-20170518-1256%', 'like');
+        $obj->fields('*');
+        $obj->leftJoin('test t2', 'on t2.id = t1.id');
+        $obj->rightJoin('test t3', 'on t3.id = t2.id');
+        $obj->innerJoin('test t4', 'on t4.id = t3.id');
+        $obj->findAll();
+
+        $sql = "SELECT * FROM test t1 LEFT JOIN test t2 on t2.id = t1.id RIGHT JOIN test t3 on t3.id = t2.id INNER JOIN test t4 on t4.id = t3.id WHERE t2.name LIKE 'SelectTest::testFindAll-20170518-1256%'";
+        $this->assertEquals($sql, ConnectionFactor::getLastRawSql()['rawSql']);
+    }
+
 
 
 
