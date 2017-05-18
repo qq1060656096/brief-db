@@ -53,7 +53,14 @@ $result = ConnectionFactor::getInsert($connection, DriverName::MYSQL)
 
 // 删除
 ConnectionFactor::getDelete($connection, DriverName::MYSQL)
-->from('test')->condition('name', 'test_01')->delete();
+->from('test')
+//like查询
+->condition('name', 'test_01%', 'like')
+// in条件
+->condition('name', ['xiao1','xiao2'])
+//复杂条件
+->conditionComplex("(age >= ? and age <= ?) or created like ?", [60, 70, '2017-05-18 17:28%'])
+->delete();
 
 
 
@@ -84,6 +91,8 @@ $data = [
 ];
 $condition  = new Condition('AND');
 $condition->condition('name', 'updateBatch02', 'like');
+// in条件
+$condition->condition('name', ['xiao1','xiao2']);
 $bathUpdate->addData($condition, $data);
 ConnectionFactor::getUpdate($connection, DriverName::MYSQL)
     ->from('test')->updateAll($bathUpdate);
@@ -108,6 +117,8 @@ $count = $select->findCount();
 $select = ConnectionFactor::getSelect(ConnectionFactor::getInstance(), DriverName::MYSQL);
 $select->from('test t1');
 $select->condition('t2.name', 'SelectTest::testFindAll-20170518-1256%', 'like');
+// in查询
+$select->condition('t2.name', ['xiao1','xiao2']);
 $select->fields('*');
 // 左联查询
 $select->leftJoin('test t2', 'on t2.id = t1.id');

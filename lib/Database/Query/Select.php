@@ -394,9 +394,10 @@ class Select extends Query
         }
         $joinArr ? $queryArr['join'] = implode(" ", $joinArr) : null;
 
-        $wherStr = (string) $this->condition;
-        $wherStr ? $queryArr['where'] = 'WHERE '. $wherStr : null;
-        $wherStr ? $arguments = $this->condition->arguments() : null;
+        $this->condition->compile();
+        $whereStr = (string) $this->condition;
+        $whereStr ? $queryArr['where'] = 'WHERE '. $whereStr : null;
+        $whereStr ? $arguments = ArrayLib::array_add($arguments, $this->condition->arguments()) : null;
 
         $group = $this->getGroupBy();
         $group ? $queryArr['group'] = "GROUP BY ".implode(',', $group) : null;

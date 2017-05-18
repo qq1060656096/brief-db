@@ -134,6 +134,8 @@ class ConnectionFactorTest extends WeiTestCase
         $select = ConnectionFactor::getSelect(ConnectionFactor::getInstance(), DriverName::MYSQL);
         $select->from('test t1');
         $select->condition('t2.name', 'SelectTest::testFindAll-20170518-1256%', 'like');
+        // in查询
+        $select->condition('t2.name', ['xiao1','xiao2']);
         $select->fields('*');
         // 左联查询
         $select->leftJoin('test t2', 'on t2.id = t1.id');
@@ -142,13 +144,24 @@ class ConnectionFactorTest extends WeiTestCase
         // 内联查询
         $select->innerJoin('test t4', 'on t4.id = t3.id');
         $select->findAll();
-
         print_r($row);
         print_r($rows);
         var_dump($count);
 //        var_dump($result);
         print_r(ConnectionFactor::getLastRawSql());
-        $sql = "SELECT * FROM test t1 LEFT JOIN test t2 on t2.id = t1.id RIGHT JOIN test t3 on t3.id = t2.id INNER JOIN test t4 on t4.id = t3.id WHERE t2.name LIKE 'SelectTest::testFindAll-20170518-1256%'";
-        $this->assertEquals($sql, ConnectionFactor::getLastRawSql()['rawSql']);
+        $sql = "SELECT * FROM test t1 LEFT JOIN test t2 on t2.id = t1.id RIGHT JOIN test t3 on t3.id = t2.id INNER JOIN test t4 on t4.id = t3.id WHERE t2.name LIKE ? AND t2.name IN ( ?,? )";
+        print_r($select->getArguments());
+        print_r(ConnectionFactor::getLastRawSql()['currentQuery']['sql']);
+
+        $this->assertEquals($sql, ConnectionFactor::getLastRawSql()['currentQuery']['sql']);
+
+    }
+
+    /**
+     *
+     */
+    public function testCondition()
+    {
+
     }
 }

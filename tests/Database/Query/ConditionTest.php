@@ -7,6 +7,17 @@ use Wei\Base\Tests\WeiTestCase;
 class ConditionTest extends WeiTestCase
 {
     /**
+     * 测试in条件
+     */
+    public function testConditionIn()
+    {
+        $condition = new Condition('and');
+        $condition->condition('age', [2,3,4,5]);
+        $condition->compile();
+        $this->assertEquals('age IN ( ?,?,?,? )', (string)$condition);
+        $this->assertEquals([2,3,4,5], $condition->arguments());
+    }
+    /**
      * 测试简单条件
      */
     public function testCondition()
