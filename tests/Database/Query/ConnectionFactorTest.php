@@ -6,6 +6,7 @@ use Wei\Base\Database\Driver\DriverName;
 use Wei\Base\Database\Query\BatchUpdate;
 use Wei\Base\Database\Query\Condition;
 use Wei\Base\Database\Query\ConnectionFactor;
+use Wei\Base\Database\Query\QueryFactor;
 use Wei\Base\Tests\WeiTestCase;
 
 /**
@@ -37,16 +38,16 @@ class ConnectionFactorTest extends WeiTestCase
 
     public function testDataBaseOperationInstance()
     {
-        $mysqlDelete = ConnectionFactor::getDelete(ConnectionFactor::getInstance(), DriverName::MYSQL);
+        $mysqlDelete = QueryFactor::getDelete(ConnectionFactor::getInstance(), DriverName::MYSQL);
         $this->assertEquals(get_class($mysqlDelete), 'Wei\Base\Database\Driver\mysql\Delete');
 
-        $mysqlInsert = ConnectionFactor::getInsert(ConnectionFactor::getInstance(), DriverName::MYSQL);
+        $mysqlInsert = QueryFactor::getInsert(ConnectionFactor::getInstance(), DriverName::MYSQL);
         $this->assertEquals(get_class($mysqlInsert), 'Wei\Base\Database\Driver\mysql\Insert');
 
-        $mysqlUpdate = ConnectionFactor::getUpdate(ConnectionFactor::getInstance(), DriverName::MYSQL);
+        $mysqlUpdate = QueryFactor::getUpdate(ConnectionFactor::getInstance(), DriverName::MYSQL);
         $this->assertEquals(get_class($mysqlUpdate), 'Wei\Base\Database\Driver\mysql\Update');
 
-        $mysqlSelect = ConnectionFactor::getSelect(ConnectionFactor::getInstance(), DriverName::MYSQL);
+        $mysqlSelect = QueryFactor::getSelect(ConnectionFactor::getInstance(), DriverName::MYSQL);
         $this->assertEquals(get_class($mysqlSelect), 'Wei\Base\Database\Driver\mysql\Select');
     }
 
@@ -55,7 +56,7 @@ class ConnectionFactorTest extends WeiTestCase
         ConnectionFactor::getInstance();
         ConnectionFactor::enabledSqlLog();
         // 删除
-        ConnectionFactor::getDelete(ConnectionFactor::getInstance(), DriverName::MYSQL)
+        QueryFactor::getDelete(ConnectionFactor::getInstance(), DriverName::MYSQL)
             ->from('test')->condition('name', 'test_01')->delete();
 
         // 插入
@@ -64,7 +65,7 @@ class ConnectionFactorTest extends WeiTestCase
             'age' => 1,
             'uid' => 1,
         ];
-        ConnectionFactor::getInsert(ConnectionFactor::getInstance(), DriverName::MYSQL)
+        QueryFactor::getInsert(ConnectionFactor::getInstance(), DriverName::MYSQL)
             ->from('test')->insert($insertData);
 
         // 批量插入
@@ -80,7 +81,7 @@ class ConnectionFactorTest extends WeiTestCase
                 'uid' => 4,
             ]
         ];
-        $result = ConnectionFactor::getInsert(ConnectionFactor::getInstance(), DriverName::MYSQL)
+        $result = QueryFactor::getInsert(ConnectionFactor::getInstance(), DriverName::MYSQL)
             ->from('test')->insertAll($insertData);
 
         // 更改
@@ -89,7 +90,7 @@ class ConnectionFactorTest extends WeiTestCase
             'age' => 33,
             'uid' => 333,
         ];
-        ConnectionFactor::getUpdate(ConnectionFactor::getInstance(), DriverName::MYSQL)
+        QueryFactor::getUpdate(ConnectionFactor::getInstance(), DriverName::MYSQL)
             ->from('test')->condition('name', 'update01')->update($updateData);
 
 
@@ -111,12 +112,12 @@ class ConnectionFactorTest extends WeiTestCase
         $condition  = new Condition('AND');
         $condition->condition('name', 'updateBatch02', 'like');
         $bathUpdate->addData($condition, $data);
-        ConnectionFactor::getUpdate(ConnectionFactor::getInstance(), DriverName::MYSQL)
+        QueryFactor::getUpdate(ConnectionFactor::getInstance(), DriverName::MYSQL)
             ->from('test')->updateAll($bathUpdate);
 
 
         //查询
-        $select = ConnectionFactor::getSelect(ConnectionFactor::getInstance(), DriverName::MYSQL)
+        $select = QueryFactor::getSelect(ConnectionFactor::getInstance(), DriverName::MYSQL)
             ->fields('name,id')
             ->fields(['uid', 'age'])
             ->from('test')
@@ -131,7 +132,7 @@ class ConnectionFactorTest extends WeiTestCase
         $count = $select->findCount();
 
         //关联查询
-        $select = ConnectionFactor::getSelect(ConnectionFactor::getInstance(), DriverName::MYSQL);
+        $select = QueryFactor::getSelect(ConnectionFactor::getInstance(), DriverName::MYSQL);
         $select->from('test t1');
         $select->condition('t2.name', 'SelectTest::testFindAll-20170518-1256%', 'like');
         // in查询

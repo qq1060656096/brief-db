@@ -22,18 +22,18 @@ Config::get('table_prefix', 'db.php');
 use Wei\Base\Database\Driver\DriverName;
 use Wei\Base\Database\Query\BatchUpdate;
 use Wei\Base\Database\Query\Condition;
-use Wei\Base\Database\Query\ConnectionFactor;
+use Wei\Base\Database\Query\QueryFactor;
 
 
 /* @var $connection \Doctrine\DBAL\Connection */
 $connection = '';// 注意这个变量是doctrine数据库连接
 
 // 删除
-ConnectionFactor::getDelete($connection, DriverName::MYSQL)
+QueryFactor::getDelete($connection, DriverName::MYSQL)
 ->from('test')->condition('name', 'test_01')->delete();
 
 // 删除2
-ConnectionFactor::getDelete($connection, DriverName::MYSQL)
+QueryFactor::getDelete($connection, DriverName::MYSQL)
 ->from('test')
 //like查询
 ->condition('name', 'test_01%', 'like')
@@ -49,7 +49,7 @@ $insertData = [
     'age' => 1,
     'uid' => 1,
 ];
-ConnectionFactor::getInsert($connection, DriverName::MYSQL)
+QueryFactor::getInsert($connection, DriverName::MYSQL)
     ->from('test')->insert($insertData);
 
 // 批量插入
@@ -65,7 +65,7 @@ $insertData = [
         'uid' => 4,
     ]
 ];
-$result = ConnectionFactor::getInsert($connection, DriverName::MYSQL)
+$result = QueryFactor::getInsert($connection, DriverName::MYSQL)
     ->from('test')->insertAll($insertData);
 
 
@@ -75,7 +75,7 @@ $updateData = [
     'age' => 33,
     'uid' => 333,
 ];
-ConnectionFactor::getUpdate($connection, DriverName::MYSQL)
+QueryFactor::getUpdate($connection, DriverName::MYSQL)
     ->from('test')->condition('name', 'update01')->update($updateData);
 
 
@@ -99,16 +99,16 @@ $condition->condition('name', 'updateBatch02', 'like');
 // in条件
 $condition->condition('name', ['xiao1','xiao2']);
 $bathUpdate->addData($condition, $data);
-ConnectionFactor::getUpdate($connection, DriverName::MYSQL)
+QueryFactor::getUpdate($connection, DriverName::MYSQL)
     ->from('test')->updateAll($bathUpdate);
     
     
 // 查询
-$select = ConnectionFactor::getSelect($connection, DriverName::MYSQL)
+$select = QueryFactor::getSelect($connection, DriverName::MYSQL)
     ->fields('name,id')
     ->fields(['uid', 'age'])
     ->from('test')
-    ->condition('name', 'ConnectionFactorSelect00%', 'like')
+    ->condition('name', 'QueryFactorSelect00%', 'like')
 //  ->groupBy('age')
     ->orderBy('id', 'DESC');
 // 查询单行数据
@@ -119,7 +119,7 @@ $rows = $select->findAll();
 $count = $select->findCount();
 
 // 关联查询
-$select = ConnectionFactor::getSelect(ConnectionFactor::getInstance(), DriverName::MYSQL);
+$select = QueryFactor::getSelect(QueryFactor::getInstance(), DriverName::MYSQL);
 $select->from('test t1');
 $select->condition('t2.name', 'SelectTest::testFindAll-20170518-1256%', 'like');
 // in查询
