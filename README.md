@@ -26,6 +26,17 @@ $connection = '';// 注意这个变量是doctrine数据库连接
 ConnectionFactor::getDelete($connection, DriverName::MYSQL)
 ->from('test')->condition('name', 'test_01')->delete();
 
+// 删除2
+ConnectionFactor::getDelete($connection, DriverName::MYSQL)
+->from('test')
+//like查询
+->condition('name', 'test_01%', 'like')
+// in条件
+->condition('name', ['xiao1','xiao2'])
+//复杂条件
+->conditionComplex("(age >= ? and age <= ?) or created like ?", [60, 70, '2017-05-18 17:28%'])
+->delete();
+
 // 插入
 $insertData = [
     'name' => 'insert01',
@@ -50,18 +61,6 @@ $insertData = [
 ];
 $result = ConnectionFactor::getInsert($connection, DriverName::MYSQL)
     ->from('test')->insertAll($insertData);
-
-// 删除
-ConnectionFactor::getDelete($connection, DriverName::MYSQL)
-->from('test')
-//like查询
-->condition('name', 'test_01%', 'like')
-// in条件
-->condition('name', ['xiao1','xiao2'])
-//复杂条件
-->conditionComplex("(age >= ? and age <= ?) or created like ?", [60, 70, '2017-05-18 17:28%'])
-->delete();
-
 
 
 // 更改
