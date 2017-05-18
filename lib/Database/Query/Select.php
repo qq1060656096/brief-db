@@ -23,20 +23,20 @@ class Select extends Query
      *
      * @var array
      */
-    public $join = array();
+    protected $join = array();
 
     /**
      * 查询分组
      *
      * @var array
      */
-    public $group = array();
+    protected $group = array();
 
     /**
      * 排序
      * @var array
      */
-    public $order = array();
+    protected $order = array();
 
 
     /**
@@ -44,12 +44,23 @@ class Select extends Query
      *
      * @var integer
      */
-    public $limit = null;
+    protected $limit = null;
     /**
      * 从那条记录还是查询
      * @var integer
      */
-    public $offset = null;
+    protected $offset = null;
+
+    /**
+     * 编译后查询数组
+     * @var array
+     */
+    protected $queryArr = array();
+    /**
+     * 编译后参数
+     * @var array
+     */
+    protected $arguments = array();
 
     /**
      * 初始化
@@ -215,6 +226,20 @@ class Select extends Query
     }
 
     /**
+     * 获取排序字符串
+     * @return string
+     */
+    public function getOrderByString()
+    {
+        $order = $this->getOrderBy();
+        $arr = [];
+        foreach ($order as $field => $direction) {
+            $arr[] = $field.' '. $direction;
+        }
+        return implode(",", $arr);
+    }
+
+    /**
      * 分组
      *
      * @param string $field 字段名
@@ -278,5 +303,108 @@ class Select extends Query
     public function getLimit()
     {
         return $this->limit;
+    }
+
+    /**
+     * 获取编译后查询数组
+     * @return array
+     */
+    public function getQueryArr()
+    {
+        return $this->queryArr;
+    }
+
+    /**
+     * 获取编译后参数
+     *
+     * @return array
+     */
+    public function getArguments()
+    {
+        return $this->arguments;
+    }
+
+
+    /**
+     * 查询多行数据
+     *
+     * @return array
+     */
+    public function findAll()
+    {
+        $this->compile();
+        $queryArr   = $this->queryArr;
+        return $this->connection->fetchAll(implode(" ", $queryArr), $this->arguments);
+    }
+
+    /**
+     * 查询单行数据
+     *
+     * @return array
+     */
+    public function findOne()
+    {
+        $this->compile();
+        $queryArr   = $this->queryArr;
+        $queryArr['limit'] = 'LIMIT 1';
+        $arguments  = $this->arguments;
+        return $this->connection->fetchAssoc(implode(" ", $this->queryArr), $this->arguments);
+    }
+
+    /**
+     * 查询总数
+     * @return integer
+     */
+    /**
+     * 查询总条数
+     * @return mixed
+     */
+    public function findCount()
+    {
+        $this->compile();
+        $queryArr   = $this->queryArr;
+        $queryArr['field'] = 'count(*)';
+        unset($queryArr['limit']);
+        return $this->connection->fetchColumn(implode(" ", $queryArr), $this->arguments);
+    }
+
+    /**
+     * 编译
+     */
+    public function compile()
+    {
+
+        $fields     = $this->getFields();
+        $this->condition->compile();
+        $arguments  = [];
+        $queryArr['select'] = 'SELECT';
+        $queryArr['field']  = $fields ? implode(',', $fields): '*';
+        $queryArr['from']   = 'FROM';
+        $queryArr['table']  = $this->getFrom();
+
+        $wherStr = (string) $this->condition;
+        $wherStr ? $queryArr['where'] = 'WHERE '. $wherStr : null;
+        $wherStr ? $arguments = $this->condition->arguments() : null;
+
+        $group = $this->getGroupBy();
+        $group ? $queryArr['group'] = "GROUP BY ".implode(',', $group) : null;
+
+        $order  = $this->getOrderByString();
+        $order ? $queryArr['order'] = "ORDER BY ".$order : null;
+
+        $offset = $this->getOffset();
+        $limit  = $this->getLimit();
+        switch (true) {
+            case $offset && $limit:
+                $queryArr['limit'] = "LIMIT {$offset},$limit";
+                break;
+            case $limit:
+                $queryArr['limit'] = "LIMIT $limit";
+                break;
+            default:
+                break;
+        }
+        $this->queryArr     = $queryArr;
+        $this->arguments    = $arguments;
     }
 }
