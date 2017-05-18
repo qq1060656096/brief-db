@@ -22,8 +22,7 @@
     }
   },
   "require": {
-    "doctrine/dbal": "v2.5.4",
-    "hassankhan/config": "0.10.0"
+    "doctrine/dbal": "v2.5.4"
   },
   "require-dev": {
     "phpunit/phpunit": "5.4.*"

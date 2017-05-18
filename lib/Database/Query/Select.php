@@ -67,7 +67,7 @@ class Select extends Query
      * @param \Doctrine\DBAL\Connection $connection 数据库连接
      * @param string $table 表名
      */
-    public function __construct(Connection $connection, $table)
+    public function __construct(Connection $connection, $table = '')
     {
         parent::__construct($connection);
         $this->table = $table;

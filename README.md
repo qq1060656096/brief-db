@@ -6,54 +6,104 @@
 use Wei\Base\Config\Config;
 Config::get('table_prefix', 'db.php');
 ```
+### 2. 所有驱动名都在lib\Database\Driver\DriverName.php中定义
 
-### 2. 模型操作
+
+### 2. 数据操作
 ```php
-1. 批量插入操作
-$rows = [
+<?php
+// 引入要用的类
+use Wei\Base\Database\Driver\DriverName;
+use Wei\Base\Database\Query\BatchUpdate;
+use Wei\Base\Database\Query\Condition;
+use Wei\Base\Database\Query\ConnectionFactor;
+
+
+/* @var $connection \Doctrine\DBAL\Connection */
+$connection = '';// 注意这个变量是doctrine数据库连接
+
+// 删除
+ConnectionFactor::getDelete(ConnectionFactor::getInstance(), DriverName::MYSQL)
+->from('test')->condition('name', 'test_01')->delete();
+```
+
+// 插入
+$insertData = [
+    'name' => 'insert01',
+    'age' => 1,
+    'uid' => 1,
+];
+ConnectionFactor::getInsert($connection, DriverName::MYSQL)
+    ->from('test')->insert($insertData);
+
+// 批量插入
+$insertData = [
     [
-        'name' => 'data1',
+        'name' => 'insertAll01',
         'age' => 1,
-        'uid' => '1',
-        'created' => '2017-04-06 20:28',
+        'uid' => 2,
     ],
     [
-        'name' => 'data2',
-        'age' => 2,
-        'uid' => ['raw'=>'2017+1'],//插入原始数据
-        'created' => '2017-04-06 20:28',
+        'name' => 'insertAll02',
+        'age' => 3,
+        'uid' => 4,
     ]
 ];
-$query = new Query();
-$result = $query->insertAll($rows);
+$result = ConnectionFactor::getInsert($connection, DriverName::MYSQL)
+    ->from('test')->insertAll($insertData);
 
-2. 批量更新
-$batchOperation = new BatchOperation();
-$where = [
-    'name' => '20170406--2340-update1'
-];
-$data = [
-    'name' => '20170406--2340-update11',
-    'age' => 17011,
-    'uid' => '11',
-    'created' => '2017-04-06 23:40:28',
-];
-$batchOperation->addData($where, $data);
-$where = [
-    'name' => '20170406--2340-update2'
-];
-$data = [
-    'name' => '20170406--2340-update22',
-    'age' => 17022,
-    'uid' => '22',
-    'created' => '2017-04-06 23:40:28',
-];
-$batchOperation->addData($where, $data);
+// 删除
+ConnectionFactor::getDelete($connection, DriverName::MYSQL)
+->from('test')->condition('name', 'test_01')->delete();
 
-$batchOperation->addData($where, $data);
-$query = new Query();
-$query->from('test');
-$result = $query->updateAll($batchOperation);
+
+
+// 更改
+$updateData = [
+    'name' => 'update01',
+    'age' => 33,
+    'uid' => 333,
+];
+ConnectionFactor::getUpdate($connection, DriverName::MYSQL)
+    ->from('test')->condition('name', 'update01')->update($updateData);
+
+
+// 批量更改
+$bathUpdate = new BatchUpdate();
+$condition  = new Condition('AND');
+$condition->condition('name', 'updateBatch01', 'like');
+$data       = [
+    'age' => 1815080100,
+    'uid' => 18150801200,
+    'created' => '2017-05-18 15:08:01',
+];
+$bathUpdate->addData($condition, $data);
+$data = [
+    'age' => 1815080200,
+    'uid' => 18150802200,
+    'created' => '2017-05-18 15:08:02',
+];
+$condition  = new Condition('AND');
+$condition->condition('name', 'updateBatch02', 'like');
+$bathUpdate->addData($condition, $data);
+ConnectionFactor::getUpdate($connection, DriverName::MYSQL)
+    ->from('test')->updateAll($bathUpdate);
+    
+    
+//查询
+$select = ConnectionFactor::getSelect($connection, DriverName::MYSQL)
+    ->fields('name,id')
+    ->fields(['uid', 'age'])
+    ->from('test')
+    ->condition('name', 'ConnectionFactorSelect00%', 'like')
+//  ->groupBy('age')
+    ->orderBy('id', 'DESC');
+// 查询单行数据
+$row = $select->findOne();
+// 查询多行数据
+$rows = $select->findAll();
+// 查询总条数
+$count = $select->findCount();    
 ```
 
 ### 单元测试使用

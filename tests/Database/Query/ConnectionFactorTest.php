@@ -1,6 +1,10 @@
 <?php
 namespace Wei\Base\Tests\Database\Query;
 
+use Wei\Base\Database\Driver\DriverName;
+
+use Wei\Base\Database\Query\BatchUpdate;
+use Wei\Base\Database\Query\Condition;
 use Wei\Base\Database\Query\ConnectionFactor;
 use Wei\Base\Tests\WeiTestCase;
 
@@ -29,5 +33,107 @@ class ConnectionFactorTest extends WeiTestCase
         $this->assertEquals(2, count($arr['connectionDataInstance']));
 //        print_r($arr['connectionDataInstance']);
 //        print_r($arr['currentConnectionName']);
+    }
+
+    public function testDataBaseOperationInstance()
+    {
+        $mysqlDelete = ConnectionFactor::getDelete(ConnectionFactor::getInstance(), DriverName::MYSQL);
+        $this->assertEquals(get_class($mysqlDelete), 'Wei\Base\Database\Driver\mysql\Delete');
+
+        $mysqlInsert = ConnectionFactor::getInsert(ConnectionFactor::getInstance(), DriverName::MYSQL);
+        $this->assertEquals(get_class($mysqlInsert), 'Wei\Base\Database\Driver\mysql\Insert');
+
+        $mysqlUpdate = ConnectionFactor::getUpdate(ConnectionFactor::getInstance(), DriverName::MYSQL);
+        $this->assertEquals(get_class($mysqlUpdate), 'Wei\Base\Database\Driver\mysql\Update');
+
+        $mysqlSelect = ConnectionFactor::getSelect(ConnectionFactor::getInstance(), DriverName::MYSQL);
+        $this->assertEquals(get_class($mysqlSelect), 'Wei\Base\Database\Driver\mysql\Select');
+    }
+
+    public function test()
+    {
+        ConnectionFactor::getInstance();
+        ConnectionFactor::enabledSqlLog();
+        // 删除
+        ConnectionFactor::getDelete(ConnectionFactor::getInstance(), DriverName::MYSQL)
+            ->from('test')->condition('name', 'test_01')->delete();
+
+        // 插入
+        $insertData = [
+            'name' => 'insert01',
+            'age' => 1,
+            'uid' => 1,
+        ];
+        ConnectionFactor::getInsert(ConnectionFactor::getInstance(), DriverName::MYSQL)
+            ->from('test')->insert($insertData);
+
+        // 批量插入
+        $insertData = [
+            [
+                'name' => 'insertAll01',
+                'age' => 1,
+                'uid' => 2,
+            ],
+            [
+                'name' => 'insertAll02',
+                'age' => 3,
+                'uid' => 4,
+            ]
+        ];
+        $result = ConnectionFactor::getInsert(ConnectionFactor::getInstance(), DriverName::MYSQL)
+            ->from('test')->insertAll($insertData);
+
+        // 更改
+        $updateData = [
+            'name' => 'update01',
+            'age' => 33,
+            'uid' => 333,
+        ];
+        ConnectionFactor::getUpdate(ConnectionFactor::getInstance(), DriverName::MYSQL)
+            ->from('test')->condition('name', 'update01')->update($updateData);
+
+
+        // 批量更改
+        $bathUpdate = new BatchUpdate();
+        $condition  = new Condition('AND');
+        $condition->condition('name', 'updateBatch01', 'like');
+        $data       = [
+            'age' => 1815080100,
+            'uid' => 18150801200,
+            'created' => '2017-05-18 15:08:01',
+        ];
+        $bathUpdate->addData($condition, $data);
+        $data = [
+            'age' => 1815080200,
+            'uid' => 18150802200,
+            'created' => '2017-05-18 15:08:02',
+        ];
+        $condition  = new Condition('AND');
+        $condition->condition('name', 'updateBatch02', 'like');
+        $bathUpdate->addData($condition, $data);
+        ConnectionFactor::getUpdate(ConnectionFactor::getInstance(), DriverName::MYSQL)
+            ->from('test')->updateAll($bathUpdate);
+
+
+        //查询
+        $select = ConnectionFactor::getSelect(ConnectionFactor::getInstance(), DriverName::MYSQL)
+            ->fields('name,id')
+            ->fields(['uid', 'age'])
+            ->from('test')
+            ->condition('name', 'ConnectionFactorSelect00%', 'like')
+//            ->groupBy('age')
+            ->orderBy('id', 'DESC');
+        // 查询单行数据
+        $row = $select->findOne();
+        // 查询多行数据
+        $rows = $select->findAll();
+        // 查询总条数
+        $count = $select->findCount();
+
+        print_r($row);
+        print_r($rows);
+        var_dump($count);
+//        var_dump($result);
+        print_r(ConnectionFactor::getLastRawSql());
     }
 }
