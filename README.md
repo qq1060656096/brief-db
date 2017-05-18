@@ -23,9 +23,8 @@ use Wei\Base\Database\Query\ConnectionFactor;
 $connection = '';// 注意这个变量是doctrine数据库连接
 
 // 删除
-ConnectionFactor::getDelete(ConnectionFactor::getInstance(), DriverName::MYSQL)
+ConnectionFactor::getDelete($connection, DriverName::MYSQL)
 ->from('test')->condition('name', 'test_01')->delete();
-```
 
 // 插入
 $insertData = [
