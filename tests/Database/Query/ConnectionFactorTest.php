@@ -144,14 +144,14 @@ class ConnectionFactorTest extends WeiTestCase
         // 内联查询
         $select->innerJoin('test t4', 'on t4.id = t3.id');
         $select->findAll();
-        print_r($row);
-        print_r($rows);
-        var_dump($count);
+//        print_r($row);
+//        print_r($rows);
+//        var_dump($count);
 //        var_dump($result);
-        print_r(ConnectionFactor::getLastRawSql());
+//        print_r(ConnectionFactor::getLastRawSql());
         $sql = "SELECT * FROM test t1 LEFT JOIN test t2 on t2.id = t1.id RIGHT JOIN test t3 on t3.id = t2.id INNER JOIN test t4 on t4.id = t3.id WHERE t2.name LIKE ? AND t2.name IN ( ?,? )";
-        print_r($select->getArguments());
-        print_r(ConnectionFactor::getLastRawSql()['currentQuery']['sql']);
+//        print_r($select->getArguments());
+//        print_r(ConnectionFactor::getLastRawSql()['currentQuery']['sql']);
 
         $this->assertEquals($sql, ConnectionFactor::getLastRawSql()['currentQuery']['sql']);
 
