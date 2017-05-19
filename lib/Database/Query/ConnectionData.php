@@ -17,7 +17,7 @@ class ConnectionData
      *
      * @var string
      */
-    protected $connectionName = null;
+    protected $connectName = null;
 
     /**
      * 驱动名
@@ -39,14 +39,14 @@ class ConnectionData
 
     /**
      * 初始化
-     * @param string $connectionName 连接名
+     * @param string $connectName 连接名
      * @param string $driver 驱动名
      * @param Connection $connection 数据库连接
      * @return $this
      */
-    public function setData($connectionName, $driver,Connection $connection)
+    public function setData($connectName, $driver,Connection $connection)
     {
-        $this->connectionName = $connectionName;
+        $this->connectName = $connectName;
         $this->driver = $driver;
         $this->connection = $connection;
         return $this;
@@ -57,9 +57,9 @@ class ConnectionData
      *
      * @return string
      */
-    public function getConnectionName()
+    public function getConnectName()
     {
-        return $this->connectionName;
+        return $this->connectName;
     }
 
     /**
