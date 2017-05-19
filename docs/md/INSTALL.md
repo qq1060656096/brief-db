@@ -13,16 +13,16 @@
 
 ```php
 {
-	"repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/qq1060656096/Cards.git"
-        }
-    ],
-	"require-dev": {
-		"wei/cards": "dev-develop"
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/qq1060656096/brief-db.git"
     }
-}	
+  ],
+  "require": {
+  "wei/brief-db": "1.0.0"
+  }
+}
 ```
 
 
@@ -32,9 +32,33 @@
 composer install
 ```
 
-4步 使用单元测试必须创建以下表结构
+4步 请在项目根目录增加下创建"config/db.php"文件
 -------------------------
+
+> 增加一下内容:
 ```php
+<?php
+//数据库配置
+return [
+    'mysql' => [
+        'driver'    => 'mysql',// msyql驱动
+        'host'      => 'localhost',// 主机
+        'port'      => 3306,// 端口
+        'user'      => 'root',// 账户
+        'password'  => 'root',// 密码
+        'dbname'    => 'demo',// 数据库名
+        'table_prefix'  => 'tbl_',// 表前缀
+    ],
+];
+```
+
+
+
+
+
+```sql
+# 外引用本包忽略以下步骤
+"wei/brief-db"包使用单元测试必须创建以下表结构
 
 CREATE TABLE `tbl_demo1` (
   `did` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -60,23 +84,4 @@ CREATE TABLE `test` (
   `created` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3965 DEFAULT CHARSET=utf8mb4;
-```
-
-5步 请在项目根目录增加config/db.php
--------------------------
-> 增加一下内容:
-```php
-<?php
-//数据库配置
-return [
-    'db_host' => 'localhost',//主机
-    'db_port' => 3306,//端口
-    'db_user' => 'root',//账户
-    'db_pass' => 'root',//密码
-    'db_name' => 'demo',//数据库名
-    'table_prefix'  => 'tbl_',//表前缀
-];
-
-
-
 ```

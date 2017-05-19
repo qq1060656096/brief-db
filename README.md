@@ -7,15 +7,46 @@
 | Sqlite   | sqlite  | 暂不支持(未开发) |
 
 
-### 1. 获取配置文件
+## 1 安装(Install)
+> 1. 通过Composer安装
+> 2. 创建composer.json文件,并写入以下内容:
+
 ```php
-use Wei\Base\Config\Config;
-Config::get('table_prefix', 'db.php');
+{
+ "repositories": [
+   {
+     "type": "vcs",
+     "url": "https://github.com/qq1060656096/brief-db.git"
+   }
+ ],
+ "require": {
+ "wei/brief-db": "1.0.0"
+ }
+}
 ```
-### 2. 所有驱动名都在lib\Database\Driver\DriverName.php中定义
+> 3. 执行composer install
 
+> 4. 请在项目根目录增加下创建"config/db.php"文件增加一下内容:
 
-### 3. 数据操作
+```php
+<?php
+//数据库配置
+return [
+   'mysql' => [
+       'driver'    => 'mysql',// msyql驱动
+       'host'      => 'localhost',// 主机
+       'port'      => 3306,// 端口
+       'user'      => 'root',// 账户
+       'password'  => 'root',// 密码
+       'dbname'    => 'demo',// 数据库名
+       'table_prefix'  => 'tbl_',// 表前缀
+   ],
+];
+```
+
+## 2. 所有驱动名都在lib\Database\Driver\DriverName.php中定义
+
+## 3. 数据操作
 ```php
 <?php
 // 引入要用的类
@@ -132,6 +163,12 @@ $select->rightJoin('test t3', 'on t3.id = t2.id');
 // 内联查询
 $select->innerJoin('test t4', 'on t4.id = t3.id');
 $select->findAll();
+```
+
+## 4. 获取配置文件
+```php
+use Wei\Base\Config\Config;
+Config::get('table_prefix', 'db.php');
 ```
 
 ### 单元测试使用
