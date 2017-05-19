@@ -1,13 +1,13 @@
 <?php
-namespace Wei\Base\Database\Query;
+namespace Wei\BriefDB\Database\Query;
 
-use Wei\Base\Common\ArrayLib;
+use Wei\BriefDB\Common\ArrayLib;
 
 /**
  * 条件类
  *
  * Class Condition
- * @package Wei\Base\DB
+ * @package Wei\BriefDB\DB
  */
 class Condition extends ConditionAbstract
 {

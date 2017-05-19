@@ -1,11 +1,11 @@
 <?php
-namespace Wei\Base\Exception;
+namespace Wei\BriefDB\Exception;
 
 /**
  * 限制访问频率异常
  *
  * Class LimitFrequencyException
- * @package Wei\Base\Exception
+ * @package Wei\BriefDB\Exception
  */
 class LimitFrequencyException extends BaseException
 {

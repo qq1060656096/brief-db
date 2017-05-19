@@ -1,5 +1,5 @@
 <?php
-namespace Wei\Base\Database\Query;
+namespace Wei\BriefDB\Database\Query;
 
 use Doctrine\DBAL\Connection;
 

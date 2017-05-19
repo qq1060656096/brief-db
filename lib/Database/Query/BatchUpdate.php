@@ -1,11 +1,11 @@
 <?php
-namespace Wei\Base\Database\Query;
+namespace Wei\BriefDB\Database\Query;
 
-use Wei\Base\Database\Query\Condition;
+use Wei\BriefDB\Database\Query\Condition;
 
 /**
  * 批量更新
- * @package Wei\Base\DB
+ * @package Wei\BriefDB\DB
  */
 class BatchUpdate
 {
@@ -14,7 +14,7 @@ class BatchUpdate
     /**
      * 设置批量更新数据
      *
-     * @param \Wei\Base\Database\Query\Condition $condition 条件
+     * @param \Wei\BriefDB\Database\Query\Condition $condition 条件
      * @param array $data 键值数组
      */
     public function setData(Condition $condition, $data)
@@ -25,7 +25,7 @@ class BatchUpdate
     /**
      * 添加批量更新数据
      *
-     * @param \Wei\Base\Database\Query\Condition $condition 条件
+     * @param \Wei\BriefDB\Database\Query\Condition $condition 条件
      * @param array $data 键值数组
      */
     public function addData(Condition $condition, $data)

@@ -1,11 +1,11 @@
 <?php
-namespace Wei\Base\Tests\Database\Driver\mysql;
+namespace Wei\BriefDB\Tests\Database\Driver\mysql;
 
-use Wei\Base\Database\Query\BatchUpdate;
-use Wei\Base\Database\Query\Condition;
-use Wei\Base\Database\Query\ConnectionFactor;
-use Wei\Base\Database\Driver\mysql\Update;
-use Wei\Base\Tests\WeiTestCase;
+use Wei\BriefDB\Database\Query\BatchUpdate;
+use Wei\BriefDB\Database\Query\Condition;
+use Wei\BriefDB\Database\Query\ConnectionFactor;
+use Wei\BriefDB\Database\Driver\mysql\Update;
+use Wei\BriefDB\Tests\WeiTestCase;
 
 class UpdateTest extends WeiTestCase
 {

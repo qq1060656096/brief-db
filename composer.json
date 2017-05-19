@@ -1,8 +1,8 @@
 {
-  "name": "wei/base",
+  "name": "wei/brief-db",
   "type": "library",
-  "description": "base library for PHP",
-  "keywords": [""],
+  "description": "brief-db library for PHP",
+  "keywords": ["Doctrine2", "Doctrin2 Simplify", "Simplify Database Operation", "Pagination"],
   "license": "BSD",
   "authors": [
     {
@@ -13,16 +13,16 @@
   ],
   "autoload": {
     "psr-4":{
-      "Wei\\Base\\":"lib/"
+      "Wei\\BriefDB\\":"lib/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Wei\\Base\\Tests\\": "tests"
+      "Wei\\BriefDB\\Tests\\": "tests"
     }
   },
   "require": {
-    "doctrine/dbal": "v2.5.4"
+    "doctrine/dbal": "v2.5.*"
   },
   "require-dev": {
     "phpunit/phpunit": "5.4.*"

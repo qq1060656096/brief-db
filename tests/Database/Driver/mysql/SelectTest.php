@@ -1,10 +1,10 @@
 <?php
-namespace Wei\Base\Tests\Database\Driver\mysql;
+namespace Wei\BriefDB\Tests\Database\Driver\mysql;
 
 
-use Wei\Base\Database\Driver\mysql\Select;
-use Wei\Base\Database\Query\ConnectionFactor;
-use Wei\Base\Tests\WeiTestCase;
+use Wei\BriefDB\Database\Driver\mysql\Select;
+use Wei\BriefDB\Database\Query\ConnectionFactor;
+use Wei\BriefDB\Tests\WeiTestCase;
 
 class SelectTest extends WeiTestCase
 {

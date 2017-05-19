@@ -1,5 +1,5 @@
 <?php
-namespace Wei\Base\Common;
+namespace Wei\BriefDB\Common;
 
 use Composer\Autoload\ClassLoader;
 
@@ -7,7 +7,7 @@ use Composer\Autoload\ClassLoader;
  * composer常用方法
  *
  * Class Composer
- * @package Wei\Base\Common
+ * @package Wei\BriefDB\Common
  */
 class Composer
 {

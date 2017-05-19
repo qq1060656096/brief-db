@@ -1,5 +1,5 @@
 <?php
-namespace Wei\Base\Database\Query;
+namespace Wei\BriefDB\Database\Query;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Logging\SQLLogger;
@@ -8,7 +8,7 @@ use Doctrine\DBAL\Logging\SQLLogger;
  * 数据库连接信息类
  *
  * Class ConnectionData
- * @package Wei\Base\Database\Query
+ * @package Wei\BriefDB\Database\Query
  */
 class ConnectionData
 {

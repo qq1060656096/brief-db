@@ -1,5 +1,5 @@
 <?php
-namespace Wei\Base\Tests;
+namespace Wei\BriefDB\Tests;
 
 
 if (file_exists(__DIR__ . '/../vendor/autoload.php')) {

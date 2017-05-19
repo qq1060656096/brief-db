@@ -1,10 +1,10 @@
 <?php
-namespace Wei\Base\Tests\Common;
+namespace Wei\BriefDB\Tests\Common;
 
 
-use Wei\Base\Common\Composer;
-use Wei\Base\Common\Pagination;
-use Wei\Base\Tests\WeiTestCase;
+use Wei\BriefDB\Common\Composer;
+use Wei\BriefDB\Common\Pagination;
+use Wei\BriefDB\Tests\WeiTestCase;
 
 /**
  * 分页单元测试

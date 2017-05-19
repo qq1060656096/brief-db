@@ -1,14 +1,14 @@
 <?php
-namespace Wei\Base\Database\Query;
+namespace Wei\BriefDB\Database\Query;
 
 use Doctrine\DBAL\Connection;
-use Wei\Base\Common\ArrayLib;
-use Wei\Base\Exception\BaseException;
+use Wei\BriefDB\Common\ArrayLib;
+use Wei\BriefDB\Exception\BaseException;
 
 /**
  * 查询
  * Class Select
- * @package Wei\Base\Database\Query
+ * @package Wei\BriefDB\Database\Query
  */
 class Select extends Query
 {

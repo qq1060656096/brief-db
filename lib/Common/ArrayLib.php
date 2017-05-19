@@ -1,9 +1,9 @@
 <?php
-namespace Wei\Base\Common;
+namespace Wei\BriefDB\Common;
 
 /**
  * Class ArrayLib
- * @package Wei\Base\Common
+ * @package Wei\BriefDB\Common
  */
 class ArrayLib
 {
