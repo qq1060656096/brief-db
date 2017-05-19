@@ -32,7 +32,8 @@
 <?php
 //数据库配置
 return [
-   'mysql' => [
+    // 默认数据库配置
+   'default' => [
        'driver'    => 'mysql',// msyql驱动
        'host'      => 'localhost',// 主机
        'port'      => 3306,// 端口
@@ -57,7 +58,7 @@ use Wei\Base\Database\Query\QueryFactor;
 
 
 /* @var $connection \Doctrine\DBAL\Connection */
-$connection = '';// 注意这个变量是doctrine数据库连接
+$connection = ConnectionFactor::getInstance();// 获取默认数据库链接
 
 // 删除
 QueryFactor::getDelete($connection, DriverName::MYSQL)

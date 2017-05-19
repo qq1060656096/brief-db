@@ -16,5 +16,6 @@ return [
         'password'  => 'root',// 密码
         'path'      => __DIR__.'/sqlite/sqlite.db.php',// sqlite数据库路径
         'memory'    => false,
+        'table_prefix'  => 'tbl_',// 表前缀
     ],
 ];

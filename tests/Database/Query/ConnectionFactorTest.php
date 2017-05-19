@@ -3,6 +3,7 @@ namespace Wei\BriefDB\Tests\Database\Query;
 
 use Wei\BriefDB\Database\Driver\DriverName;
 
+use Wei\BriefDB\Database\Driver\mysql\Connection;
 use Wei\BriefDB\Database\Query\BatchUpdate;
 use Wei\BriefDB\Database\Query\Condition;
 use Wei\BriefDB\Database\Query\ConnectionFactor;
@@ -18,6 +19,32 @@ use Wei\BriefDB\Tests\WeiTestCase;
 class ConnectionFactorTest extends WeiTestCase
 {
     /**
+     * 测试获取表前缀
+     *
+     */
+    public function testGetConnectTablePrefix()
+    {
+        $result = ConnectionFactor::getConnectTablePrefix('default');
+        $this->assertEquals('tab_', $result);
+    }
+    /**
+     * 测试活动链接
+     */
+    public function testGetActiveConnectName()
+    {
+        // 默认活动连接
+        ConnectionFactor::getInstance();
+        $this->assertEquals('default', ConnectionFactor::getActiveConnectName());
+        // 获取sqlite数据库链接,但是没有改变默认活动链接
+        ConnectionFactor::getInstance('sqlite');
+        $this->assertEquals('default', ConnectionFactor::getActiveConnectName());
+
+        // 设置活动连接为sqlite
+        ConnectionFactor::getInstance('sqlite', true);
+        $this->assertEquals('sqlite', ConnectionFactor::getActiveConnectName());
+    }
+
+    /**
      * 测试数据库多连接
      */
     public function testMultiGetInstance()
@@ -30,10 +57,11 @@ class ConnectionFactorTest extends WeiTestCase
 
         $class  = new \ReflectionClass(ConnectionFactor::class);
         $arr    = $class->getStaticProperties();
-        $this->assertEquals('sqlite', $arr['currentConnectionName']);
+//        print_r($arr);
+        $this->assertEquals('sqlite', $arr['activeName']);
         $this->assertEquals(2, count($arr['connectionDataInstance']));
-//        print_r($arr['connectionDataInstance']);
-//        print_r($arr['currentConnectionName']);
+//        print_r($arr);
+
     }
 
     public function testDataBaseOperationInstance()
@@ -53,7 +81,7 @@ class ConnectionFactorTest extends WeiTestCase
 
     public function test()
     {
-        ConnectionFactor::getInstance();
+        ConnectionFactor::getInstance('default', true);
         ConnectionFactor::enabledSqlLog();
         // 删除
         QueryFactor::getDelete(ConnectionFactor::getInstance(), DriverName::MYSQL)
@@ -158,11 +186,6 @@ class ConnectionFactorTest extends WeiTestCase
 
     }
 
-    /**
-     *
-     */
-    public function testCondition()
-    {
 
-    }
+
 }

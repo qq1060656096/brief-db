@@ -13,18 +13,15 @@ use Wei\BriefDB\Database\Query\ConnectionFactor;
  */
 class Connection
 {
-    /**
-     * 数据库链接
-     * @var \Doctrine\DBAL\Connections\MasterSlaveConnection
-     */
-    private $dbConnection = null;
+
 
     /**
      * 私有构造方法防止初始化
+     * @param string $connectName 连接名
      */
-    private function __construct()
+    private function __construct($connectName)
     {
-        $config     = Config::get(ConnectionFactor::getCurrentConnectionName(), 'db.php');
+        $config     = Config::get($connectName, 'db.php');
         //主从配置
         $config = array(
             'driver' => 'pdo_sqlite',
@@ -46,13 +43,14 @@ class Connection
 
     /**
      * 获取数据库连接实例
+     * @param string $connectName 连接名
      * @return \Doctrine\DBAL\Connections\MasterSlaveConnection
      */
-    public static function getInstance()
+    public static function getInstance($connectName)
     {
         static $db = null;
         if(!$db){
-            $db = new Connection();
+            $db = new Connection($connectName);
         }
         return $db->dbConnection;
     }
