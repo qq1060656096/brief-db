@@ -25,7 +25,7 @@ class ConnectionFactorTest extends WeiTestCase
     public function testGetConnectTablePrefix()
     {
         $result = ConnectionFactor::getConnectTablePrefix('default');
-        $this->assertEquals('tab_', $result);
+        $this->assertEquals('tbl_', $result);
     }
     /**
      * 测试活动链接

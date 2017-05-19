@@ -58,7 +58,14 @@ use Wei\Base\Database\Query\QueryFactor;
 
 
 /* @var $connection \Doctrine\DBAL\Connection */
-$connection = ConnectionFactor::getInstance();// 获取默认数据库链接
+// 获取默认数据库链接
+$connection = ConnectionFactor::getInstance();
+// 获取连接名"mysql2"的数据库连接信息
+$connection = ConnectionFactor::getInstance('mysql2');
+// 设置活动连接为sqlite(即默认数据库链接),并且获取数据库连接信息
+$connection = ConnectionFactor::getInstance('sqlite', true);
+
+
 
 // 删除
 QueryFactor::getDelete($connection, DriverName::MYSQL)
