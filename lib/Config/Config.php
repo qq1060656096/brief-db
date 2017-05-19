@@ -1,15 +1,15 @@
 <?php
-namespace Wei\Base\Config;
+namespace Wei\BriefDB\Config;
 
 use function Composer\Autoload\includeFile;
-use Wei\Base\Common\Composer;
-use Wei\Base\Exception\ConfigException;
+use Wei\BriefDB\Common\Composer;
+use Wei\BriefDB\Exception\ConfigException;
 
 /**
  * 读取配置
  *
  * Class Config
- * @package Wei\Base\Config
+ * @package Wei\BriefDB\Config
  */
 class Config
 {

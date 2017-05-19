@@ -1,11 +1,11 @@
 <?php
-namespace Wei\Base\Database\Query;
+namespace Wei\BriefDB\Database\Query;
 
 /**
  * 批量操作
  *
  * Class BatchOperation
- * @package Wei\Base\DB
+ * @package Wei\BriefDB\DB
  */
 class BatchOperation
 {

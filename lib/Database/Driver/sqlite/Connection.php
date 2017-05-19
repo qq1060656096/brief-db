@@ -1,15 +1,15 @@
 <?php
-namespace Wei\Base\Database\Driver\sqlite;
+namespace Wei\BriefDB\Database\Driver\sqlite;
 
 use Doctrine\DBAL\DriverManager;
-use Wei\Base\Config\Config;
-use Wei\Base\Database\Query\ConnectionFactor;
+use Wei\BriefDB\Config\Config;
+use Wei\BriefDB\Database\Query\ConnectionFactor;
 
 /**
  * sqlite数据库连接类
  *
  * Class Connection
- * @package Wei\Base\Database\Driver\sqlite
+ * @package Wei\BriefDB\Database\Driver\sqlite
  */
 class Connection
 {

@@ -1,5 +1,5 @@
 <?php
-namespace Wei\Base\Exception;
+namespace Wei\BriefDB\Exception;
 
 
 class ConfigException extends BaseException

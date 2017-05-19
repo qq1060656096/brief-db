@@ -1,11 +1,11 @@
 <?php
-namespace Wei\Base\Common;
+namespace Wei\BriefDB\Common;
 
 /**
  * 获取类命名空间
  *
  * Class NameSpaceLib
- * @package Wei\Base\Common
+ * @package Wei\BriefDB\Common
  */
 class NameSpaceLib
 {

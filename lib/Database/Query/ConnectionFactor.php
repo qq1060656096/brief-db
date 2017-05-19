@@ -1,15 +1,15 @@
 <?php
-namespace Wei\Base\Database\Query;
+namespace Wei\BriefDB\Database\Query;
 
 
-use Wei\Base\Config\Config;
+use Wei\BriefDB\Config\Config;
 use Doctrine\DBAL\Connection;
 
 /**
  * 数据库连接工厂类
  *
  * Class ConnectionFactor
- * @package Wei\Base\Database\Query
+ * @package Wei\BriefDB\Database\Query
  */
 class ConnectionFactor
 {
@@ -39,7 +39,7 @@ class ConnectionFactor
         $config         = Config::get($connectionName , 'db.php');
         $driver         = $config['driver'];
         //根据驱动获取数据库连接信息
-        $driver_class   = "\\Wei\\Base\\Database\\Driver\\{$driver}\\Connection";
+        $driver_class   = "\\Wei\\BriefDB\\Database\\Driver\\{$driver}\\Connection";
         /* @var $connection \Doctrine\DBAL\Connection */
         $connection     = $driver_class::getInstance();
         $connectionData = new ConnectionData();

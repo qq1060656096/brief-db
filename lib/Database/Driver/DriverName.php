@@ -1,10 +1,10 @@
 <?php
-namespace Wei\Base\Database\Driver;
+namespace Wei\BriefDB\Database\Driver;
 /**
  * 驱动名
  *
  * Class DriverName
- * @package Wei\Base\Database\Driver
+ * @package Wei\BriefDB\Database\Driver
  */
 class DriverName
 {

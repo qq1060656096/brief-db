@@ -1,9 +1,9 @@
 <?php
-namespace Wei\Base\Database\Driver\mysql;
+namespace Wei\BriefDB\Database\Driver\mysql;
 
 use Doctrine\DBAL\DriverManager;
-use Wei\Base\Config\Config;
-use Wei\Base\Database\Query\ConnectionFactor;
+use Wei\BriefDB\Config\Config;
+use Wei\BriefDB\Database\Query\ConnectionFactor;
 
 /**
  * mysql数据库连接类
@@ -13,7 +13,7 @@ use Wei\Base\Database\Query\ConnectionFactor;
  * @date 2017-03-31
  *
  * Class Connection
- * @package Wei\Base\Database\Driver\mysql
+ * @package Wei\BriefDB\Database\Driver\mysql
  */
 class Connection
 {

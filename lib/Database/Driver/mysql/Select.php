@@ -1,16 +1,16 @@
 <?php
-namespace Wei\Base\Database\Driver\mysql;
+namespace Wei\BriefDB\Database\Driver\mysql;
 
-use Wei\Base\Exception\BaseException;
-use Wei\Base\Exception\QueryException;
+use Wei\BriefDB\Exception\BaseException;
+use Wei\BriefDB\Exception\QueryException;
 
 /**
  * mysql查询
  *
  * Class Select
- * @package Wei\Base\Database\Driver\mysql
+ * @package Wei\BriefDB\Database\Driver\mysql
  */
-class Select extends \Wei\Base\Database\Query\Select
+class Select extends \Wei\BriefDB\Database\Query\Select
 {
 
 

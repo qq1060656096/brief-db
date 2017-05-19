@@ -1,5 +1,5 @@
-# Doctrine Database
-> Doctrine Database 为了减少数据库操作的一些重复工作
+# brief-db
+> brief-db为了减少Doctrine2数据库操作的一些重复工作
 
 |驱动类型   | 驱动名   | 是否支持  |
 | -------- |:-------:| -------- |
@@ -15,7 +15,7 @@ Config::get('table_prefix', 'db.php');
 ### 2. 所有驱动名都在lib\Database\Driver\DriverName.php中定义
 
 
-### 2. 数据操作
+### 3. 数据操作
 ```php
 <?php
 // 引入要用的类

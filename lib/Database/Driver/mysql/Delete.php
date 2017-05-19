@@ -1,16 +1,16 @@
 <?php
-namespace Wei\Base\Database\Driver\mysql;
+namespace Wei\BriefDB\Database\Driver\mysql;
 
-use Wei\Base\Exception\BaseException;
-use Wei\Base\Exception\QueryException;
+use Wei\BriefDB\Exception\BaseException;
+use Wei\BriefDB\Exception\QueryException;
 
 /**
  * mysql删除
  *
  * Class Delete
- * @package Wei\Base\Database\Driver\mysql
+ * @package Wei\BriefDB\Database\Driver\mysql
  */
-class Delete extends \Wei\Base\Database\Query\Delete
+class Delete extends \Wei\BriefDB\Database\Query\Delete
 {
 
     /**
