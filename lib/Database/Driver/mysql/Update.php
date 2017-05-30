@@ -39,12 +39,12 @@ class Update extends \Wei\BriefDB\Database\Query\Update
                 unset($value['value']);
             }
             //设置自定义set
-            if (!isset($value['setRaw'])) {
-                $setFragment[]  = "{$field} {$operator} ?";
+            if (!isset($value['raw'])) {
+                $setFragment[]  = "`{$field}` {$operator} ?";
                 $arguments[]    = $value;
             } else {
-                $setFragment[]  = "{$field} {$operator} {$value['setRaw']}";
-                is_array($value) ?null : $value = [$value];
+                $setFragment[]  = "`{$field}` {$operator} {$value['raw']}";
+                is_array($value) ? null : $value = [$value];
                 $arguments = ArrayLib::array_add($arguments, $value);
             }
 
