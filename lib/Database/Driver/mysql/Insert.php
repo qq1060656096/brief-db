@@ -113,7 +113,12 @@ class Insert extends \Wei\BriefDB\Database\Query\Insert
      */
     public function insert(array $rowValue)
     {
-        return $this->connection->insert($this->getFrom(), $rowValue);
+        $insertData = [];
+        foreach ($rowValue as $key => $row) {
+            $insertKey = "`{$key}`";
+            $insertData[$insertKey] = $row;
+        }
+        return $this->connection->insert($this->getFrom(), $insertData);
     }
 
     /**
