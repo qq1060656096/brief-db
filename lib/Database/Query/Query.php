@@ -2,6 +2,7 @@
 namespace Wei\BriefDB\Database\Query;
 
 use Doctrine\DBAL\Connection;
+use Wei\BriefDB\Exception\QueryException;
 
 /**
  * 查询抽象类
