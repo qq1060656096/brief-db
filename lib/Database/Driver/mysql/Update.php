@@ -44,6 +44,7 @@ class Update extends \Wei\BriefDB\Database\Query\Update
                 $arguments[]    = $value;
             } else {
                 $setFragment[]  = "`{$field}` {$operator} {$value['raw']}";
+                unset($value['raw']);
                 is_array($value) ? null : $value = [$value];
                 $arguments = ArrayLib::array_add($arguments, $value);
             }
