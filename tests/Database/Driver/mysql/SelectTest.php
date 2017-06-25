@@ -2,7 +2,9 @@
 namespace Wei\BriefDB\Tests\Database\Driver\mysql;
 
 
+use Wei\BriefDB\Database\Driver\mysql\Connection;
 use Wei\BriefDB\Database\Driver\mysql\Select;
+use Wei\BriefDB\Database\Query\Condition;
 use Wei\BriefDB\Database\Query\ConnectionFactor;
 use Wei\BriefDB\Tests\WeiTestCase;
 
@@ -294,6 +296,21 @@ class SelectTest extends WeiTestCase
         $this->assertEquals($sql, ConnectionFactor::getLastRawSql()['rawSql']);
     }
 
+    /**
+     * 测试没有查询条件 find
+     */
+    public function testNoConditionFindAll()
+    {
+        ConnectionFactor::enabledSqlLog();
+        $obj = new Select(ConnectionFactor::getInstance(), 'test t1');
+        $obj->fields('*');
+        $obj->findAll();
+        $obj->condition(new Condition('and'));
+        $sql = "SELECT * FROM test t1";
+        $this->assertEquals($sql, ConnectionFactor::getLastRawSql()['rawSql']);
+//        print_r(ConnectionFactor::getLastRawSql());
+//        exit;
+    }
 
 
 

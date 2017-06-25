@@ -97,8 +97,11 @@ class Condition extends ConditionAbstract
             switch (true) {
                 case $condition['field'] instanceof Condition:
                     $condition['field']->compile();
-                    $condition_fragments[] = '(' . (string) $condition['field'] . ')';
-                    $arguments = ArrayLib::array_add($arguments, $condition['field']->arguments());
+                    if((string) $condition['field']){
+                        $condition_fragments[] = '(' . (string) $condition['field'] . ')';
+                        $arguments = ArrayLib::array_add($arguments, $condition['field']->arguments());
+                    }
+
                     break;
                 case empty($condition['operator']):
                     $condition_fragments[] = '(' . $condition['field'] . ')';
