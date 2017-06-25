@@ -83,7 +83,12 @@ class Insert extends \Wei\BriefDB\Database\Query\Insert
             $this->arguments = ArrayLib::array_add($this->arguments, $row);
             $this->insertFragment[] = '('.implode(', ', $placeholders).')';
         }
-        $this->insertString = 'INSERT INTO ' . $this->getFrom() . ' (' . implode(', ', $this->insertFields) . ') VALUES '.implode(', ', $this->insertFragment);
+        $inserFields = [];
+        foreach ($this->insertFields as $key => $row) {
+            $insertKey = "`{$key}`";
+            $inserFields[$insertKey] = $row;
+        }
+        $this->insertString = 'INSERT INTO ' . $this->getFrom() . ' (' . implode(', ', $inserFields) . ') VALUES '.implode(', ', $this->insertFragment);
     }
 
     /**
@@ -113,7 +118,12 @@ class Insert extends \Wei\BriefDB\Database\Query\Insert
      */
     public function insert(array $rowValue)
     {
-        return $this->connection->insert($this->getFrom(), $rowValue);
+        $insertData = [];
+        foreach ($rowValue as $key => $row) {
+            $insertKey = "`{$key}`";
+            $insertData[$insertKey] = $row;
+        }
+        return $this->connection->insert($this->getFrom(), $insertData);
     }
 
     /**

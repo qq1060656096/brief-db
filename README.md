@@ -112,8 +112,14 @@ $result = QueryFactor::getInsert($connection, DriverName::MYSQL)
 $updateData = [
     'name' => 'update01',
     'age' => 33,
-    'uid' => 333,
+    'uid' => [
+        'raw' => "? + ? - ?",
+        1,
+        2,
+        3
+    ],
 ];
+// set部分: `name` = '20170531.0848',`age` = '173710',`uid` = '1' + '2' - '3'
 QueryFactor::getUpdate($connection, DriverName::MYSQL)
     ->from('test')->condition('name', 'update01')->update($updateData);
 

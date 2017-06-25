@@ -18,6 +18,7 @@ class UpdateTest extends WeiTestCase
         ConnectionFactor::getInstance()->delete('test', ['name' => '20170516--173702']);
         ConnectionFactor::getInstance()->delete('test', ['name' => '20170517--0938']);
         ConnectionFactor::getInstance()->delete('test', ['name' => '20170517--093801']);
+        ConnectionFactor::getInstance()->delete('test', ['name' => '20170531.0848']);
         $values = [
             'name' => '20170516--1737',
             'age' => 1737,
@@ -58,6 +59,14 @@ class UpdateTest extends WeiTestCase
             'created' => '2017-05-17 09:38',
         ];
         ConnectionFactor::getInstance()->insert('test', $values);
+
+        $values = [
+            'name' => '20170531.0848',
+            'age' => 3108481,
+            'uid' => 3108482,
+            'created' => '2017-05-31 08:48',
+        ];
+        ConnectionFactor::getInstance()->insert('test', $values);
     }
 
     /**
@@ -78,6 +87,33 @@ class UpdateTest extends WeiTestCase
         $this->assertEquals('1', $result);
 
     }
+
+    /**
+     * 更新
+     */
+    public function testUpdateSetRaw()
+    {
+        $obj = new Update(ConnectionFactor::getInstance(), 'test');
+        $obj->condition('name', '20170531.0848');
+        $data = [
+            'name' => '20170531.0848',
+            'age' => 173710,
+            'uid' => [
+                'raw' => "? + ? - ?",
+                1,
+                2,
+                3
+            ],
+            'created' => '2017-05-31 08:48:01',
+        ];
+        ConnectionFactor::enabledSqlLog();
+        $result = $obj->update($data);
+        print_r(ConnectionFactor::getLastRawSql());
+        $this->assertEquals('1', $result);
+
+    }
+
+
 
     /**
      * 批量更新

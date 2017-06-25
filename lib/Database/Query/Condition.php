@@ -82,6 +82,13 @@ class Condition extends ConditionAbstract
         $arguments = array();
 
         $conditions = $this->conditions;
+        //没有条件直接返回null
+        if ($this->count() < 1) {
+            $this->conditionString = '';
+            $this->arguments = [];
+            return $this;
+        }
+
         //条件操作
         $conditionOperator = $conditions['#conditionOperator'];
         unset($conditions['#conditionOperator']);
