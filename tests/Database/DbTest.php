@@ -1,5 +1,6 @@
 <?php
 namespace Wei\BriefDB\Tests;
+
 use Wei\BriefDB\Database\Db;
 
 /**

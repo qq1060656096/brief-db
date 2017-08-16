@@ -51,28 +51,14 @@ return [
 ```php
 <?php
 // 引入要用的类
-use Wei\Base\Database\Driver\DriverName;
-use Wei\Base\Database\Query\BatchUpdate;
-use Wei\Base\Database\Query\Condition;
-use Wei\Base\Database\Query\QueryFactor;
-
-
-/* @var $connection \Doctrine\DBAL\Connection */
-// 获取默认数据库链接
-$connection = ConnectionFactor::getInstance();
-// 获取连接名"mysql2"的数据库连接信息
-$connection = ConnectionFactor::getInstance('mysql2');
-// 设置活动连接为sqlite(即默认数据库链接),并且获取数据库连接信息
-$connection = ConnectionFactor::getInstance('sqlite', true);
-
-
+use Wei\BriefDB\Database\Db;
 
 // 删除
-QueryFactor::getDelete($connection, DriverName::MYSQL)
+Db::getDelete()
 ->from('test')->condition('name', 'test_01')->delete();
 
 // 删除2
-QueryFactor::getDelete($connection, DriverName::MYSQL)
+Db::getSelect()
 ->from('test')
 //like查询
 ->condition('name', 'test_01%', 'like')
@@ -88,7 +74,7 @@ $insertData = [
     'age' => 1,
     'uid' => 1,
 ];
-QueryFactor::getInsert($connection, DriverName::MYSQL)
+Db::getInsert()
     ->from('test')->insert($insertData);
 
 // 批量插入
@@ -104,7 +90,7 @@ $insertData = [
         'uid' => 4,
     ]
 ];
-$result = QueryFactor::getInsert($connection, DriverName::MYSQL)
+$result = Db::getInsert()
     ->from('test')->insertAll($insertData);
 
 
@@ -120,7 +106,7 @@ $updateData = [
     ],
 ];
 // set部分: `name` = '20170531.0848',`age` = '173710',`uid` = '1' + '2' - '3'
-QueryFactor::getUpdate($connection, DriverName::MYSQL)
+Db::getUpdate()
     ->from('test')->condition('name', 'update01')->update($updateData);
 
 
@@ -144,12 +130,12 @@ $condition->condition('name', 'updateBatch02', 'like');
 // in条件
 $condition->condition('name', ['xiao1','xiao2']);
 $bathUpdate->addData($condition, $data);
-QueryFactor::getUpdate($connection, DriverName::MYSQL)
+Db::getUpdate()
     ->from('test')->updateAll($bathUpdate);
     
     
 // 查询
-$select = QueryFactor::getSelect($connection, DriverName::MYSQL)
+$select = Db::getSelect()
     ->fields('name,id')
     ->fields(['uid', 'age'])
     ->from('test')
@@ -164,7 +150,7 @@ $rows = $select->findAll();
 $count = $select->findCount();
 
 // 关联查询
-$select = QueryFactor::getSelect(QueryFactor::getInstance(), DriverName::MYSQL);
+$select = Db::getSelect();
 $select->from('test t1');
 $select->condition('t2.name', 'SelectTest::testFindAll-20170518-1256%', 'like');
 // in查询
