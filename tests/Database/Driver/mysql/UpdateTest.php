@@ -108,7 +108,7 @@ class UpdateTest extends WeiTestCase
         ];
         ConnectionFactor::enabledSqlLog();
         $result = $obj->update($data);
-        print_r(ConnectionFactor::getLastRawSql());
+        // print_r(ConnectionFactor::getLastRawSql());
         $this->assertEquals('1', $result);
 
     }
