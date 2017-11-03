@@ -36,15 +36,27 @@ class Db
 
     /**
      * 获取数据库连接
-     * @return array [\Doctrine\DBAL\Connection, $diverName驱动名]
+     * @return \Doctrine\DBAL\Connection 数据库连接
      */
-    public static function getDbConnection()
+    public static function getConnection()
     {
         // 连接名
         $connectName    = self::getConnectName();
         $connection     = ConnectionFactor::getInstance($connectName);
+        return $connection;
+    }
+
+    /**
+     * 获取驱动名
+     *
+     * @return string
+     */
+    public static function getDriverName()
+    {
+        // 连接名
+        $connectName    = self::getConnectName();
         $diverName      = ConnectionFactor::getConnectionData($connectName)->getDriver();
-        return [$connection, $diverName];
+        return $diverName;
     }
 
     /**
@@ -53,7 +65,8 @@ class Db
      */
     public static function getInsert()
     {
-        list($connection, $diverName)   = self::getDbConnection();
+        $connection = self::getConnection();
+        $diverName = self::getDriverName();
         return QueryFactor::getInsert($connection, $diverName);
     }
 
@@ -63,7 +76,8 @@ class Db
      */
     public static function getDelete()
     {
-        list($connection, $diverName)   = self::getDbConnection();
+        $connection = self::getConnection();
+        $diverName = self::getDriverName();
         return QueryFactor::getDelete($connection, $diverName);
     }
 
@@ -74,7 +88,8 @@ class Db
      */
     public static function getUpdate()
     {
-        list($connection, $diverName)   = self::getDbConnection();
+        $connection = self::getConnection();
+        $diverName = self::getDriverName();
         return QueryFactor::getUpdate($connection, $diverName);
     }
 
@@ -84,8 +99,20 @@ class Db
      */
     public static function getSelect()
     {
-        list($connection, $diverName)   = self::getDbConnection();
+        $connection = self::getConnection();
+        $diverName = self::getDriverName();
         return QueryFactor::getSelect($connection, $diverName);
+    }
+
+    /**
+     * 获取最后插入id
+     *
+     * @return string
+     */
+    public static function lastInsertId()
+    {
+        $connection = self::getConnection();
+        return $connection->lastInsertId();
     }
 
     /**
