@@ -111,4 +111,21 @@ class DbTest extends WeiTestCase
 
         $this->assertEquals('20170816.2359.select1', $result[0]['name']);
     }
+
+    /**
+     * 测试获取执行sql
+     */
+    public function testGetRawSql()
+    {
+        // 启用sql日志
+        Db::enabledSqlLog();
+        // 查询: SELECT count(*) FROM test WHERE name LIKE '20170816.2359.se%'
+        $count = Db::getSelect()->from('test')
+            ->condition('name', '20170816.2359.se%', 'like')
+            ->findCount();
+        // 获取执行sql
+        $rawSql = Db::getLastRawSql();
+        // 打印sql日志
+        print_r($rawSql);
+    }
 }

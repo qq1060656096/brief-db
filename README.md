@@ -163,6 +163,19 @@ $select->rightJoin('test t3', 'on t3.id = t2.id');
 // 内联查询
 $select->innerJoin('test t4', 'on t4.id = t3.id');
 $select->findAll();
+
+
+// 获取执行sql
+// 启用sql日志
+Db::enabledSqlLog();
+// 查询: SELECT count(*) FROM test WHERE name LIKE '20170816.2359.se%'
+$count = Db::getSelect()->from('test')
+    ->condition('name', '20170816.2359.se%', 'like')
+    ->findCount();
+// 获取执行sql
+$rawSql = Db::getLastRawSql();
+// 打印sql日志
+print_r($rawSql);
 ```
 
 ## 4. 获取配置文件
@@ -175,3 +188,5 @@ Config::get('table_prefix', 'db.php');
 
 > --bootstrap 在测试前先运行一个 "bootstrap" PHP 文件
 * **--bootstrap引导测试:** phpunit --bootstrap ./tests/TestInit.php ./tests/
+** 测试打印原生sql **
+* phpunit --bootstrap ./tests/TestInit.php ./tests/Database/DbTest.php --filter testGetRawSql

@@ -2,7 +2,7 @@
   "name": "wei/brief-db",
   "type": "library",
   "description": "brief-db library for PHP",
-  "keywords": ["Doctrine2", "Doctrin2 Simplify", "Simplify Database Operation", "Pagination"],
+  "keywords": ["Doctrine2", "Doctrin2 Simplify", "Simplify Database Operation", "Pagination", "php database lib"],
   "license": "BSD",
   "authors": [
     {
@@ -13,7 +13,7 @@
   ],
   "autoload": {
     "psr-4":{
-      "Wei\\BriefDB\\":"lib/"
+      "Wei\\BriefDB\\":"src/"
     }
   },
   "autoload-dev": {
