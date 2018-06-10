@@ -13,6 +13,12 @@
 
 ```php
 {
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/qq1060656096/brief-db.git"
+        }
+    ],
     "require": {
         "zwei/brief-db": "~2"
     }
