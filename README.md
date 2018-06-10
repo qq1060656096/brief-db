@@ -51,7 +51,7 @@ return [
 ```php
 <?php
 // 引入要用的类
-use Wei\BriefDB\Database\Db;
+use Zwei\BriefDB\Database\Db;
 
 // 删除
 Db::getDelete()
@@ -180,7 +180,7 @@ print_r($rawSql);
 
 ## 4. 获取配置文件
 ```php
-use Wei\Base\Config\Config;
+use Zwei\Base\Config\Config;
 Config::get('table_prefix', 'db.php');
 ```
 

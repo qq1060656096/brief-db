@@ -1,11 +1,11 @@
 <?php
-namespace Wei\BriefDB\Database\Query;
+namespace Zwei\BriefDB\Database\Query;
 
 /**
  * 批量操作
  *
  * Class BatchOperation
- * @package Wei\BriefDB\DB
+ * @package Zwei\BriefDB\DB
  */
 class BatchOperation
 {

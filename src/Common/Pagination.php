@@ -1,11 +1,11 @@
 <?php
-namespace Wei\BriefDB\Common;
+namespace Zwei\BriefDB\Common;
 
 /**
  * 分页类
  *
  * Class Pagination
- * @package Wei\BriefDB\Common
+ * @package Zwei\BriefDB\Common
  */
 class Pagination
 {

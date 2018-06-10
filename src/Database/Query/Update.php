@@ -1,14 +1,14 @@
 <?php
-namespace Wei\BriefDB\Database\Query;
+namespace Zwei\BriefDB\Database\Query;
 
-use Wei\BriefDB\Common\ArrayLib;
+use Zwei\BriefDB\Common\ArrayLib;
 use Doctrine\DBAL\Connection;
 
 /**
  * 更新
  *
  * Class Update
- * @package Wei\BriefDB\Database\Query
+ * @package Zwei\BriefDB\Database\Query
  */
 abstract class Update extends Query
 {

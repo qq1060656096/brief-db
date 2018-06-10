@@ -1,8 +1,8 @@
 <?php
-namespace Wei\BriefDB\Database\Query;
+namespace Zwei\BriefDB\Database\Query;
 
 use Doctrine\DBAL\Connection;
-use Wei\BriefDB\Exception\QueryException;
+use Zwei\BriefDB\Exception\QueryException;
 
 /**
  * 查询抽象类

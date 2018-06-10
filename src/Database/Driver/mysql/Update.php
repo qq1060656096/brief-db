@@ -1,16 +1,16 @@
 <?php
-namespace Wei\BriefDB\Database\Driver\mysql;
+namespace Zwei\BriefDB\Database\Driver\mysql;
 
-use Wei\BriefDB\Common\ArrayLib;
-use Wei\BriefDB\Database\Query\BatchUpdate;
+use Zwei\BriefDB\Common\ArrayLib;
+use Zwei\BriefDB\Database\Query\BatchUpdate;
 
 /**
  * 更新
  *
  * Class Update
- * @package Wei\BriefDB\Database\Driver\mysql
+ * @package Zwei\BriefDB\Database\Driver\mysql
  */
-class Update extends \Wei\BriefDB\Database\Query\Update
+class Update extends \Zwei\BriefDB\Database\Query\Update
 {
 
     /**
@@ -91,7 +91,7 @@ class Update extends \Wei\BriefDB\Database\Query\Update
         $saveCount  = 0;
         $this->connection->beginTransaction();
         foreach ($data as $key => $row) {
-            /* @var $condition \Wei\BriefDB\Database\Query\Condition */
+            /* @var $condition \Zwei\BriefDB\Database\Query\Condition */
             $condition  = $row['condition'];
             $condition->compile();
             $saveData   = $row['saveData'];

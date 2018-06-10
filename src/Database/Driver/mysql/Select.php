@@ -1,16 +1,16 @@
 <?php
-namespace Wei\BriefDB\Database\Driver\mysql;
+namespace Zwei\BriefDB\Database\Driver\mysql;
 
-use Wei\BriefDB\Exception\BaseException;
-use Wei\BriefDB\Exception\QueryException;
+use Zwei\BriefDB\Exception\BaseException;
+use Zwei\BriefDB\Exception\QueryException;
 
 /**
  * mysql查询
  *
  * Class Select
- * @package Wei\BriefDB\Database\Driver\mysql
+ * @package Zwei\BriefDB\Database\Driver\mysql
  */
-class Select extends \Wei\BriefDB\Database\Query\Select
+class Select extends \Zwei\BriefDB\Database\Query\Select
 {
 
 

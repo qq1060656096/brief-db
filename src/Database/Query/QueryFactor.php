@@ -1,5 +1,5 @@
 <?php
-namespace Wei\BriefDB\Database\Query;
+namespace Zwei\BriefDB\Database\Query;
 
 use Doctrine\DBAL\Connection;
 
@@ -7,7 +7,7 @@ use Doctrine\DBAL\Connection;
  * 查询工厂类
  *
  * Class QueryFactor
- * @package Wei\BriefDB\Database\Query
+ * @package Zwei\BriefDB\Database\Query
  */
 class QueryFactor
 {
@@ -17,11 +17,11 @@ class QueryFactor
      *
      * @param \Doctrine\DBAL\Connection $connection 数据库连接
      * @param string $driver 驱动名
-     * @return \Wei\BriefDB\Database\Driver\mysql\Delete
+     * @return \Zwei\BriefDB\Database\Driver\mysql\Delete
      */
     public static function getDelete(Connection $connection, $driver = '')
     {
-        $class = "\\Wei\\BriefDB\\Database\\Driver\\{$driver}\\Delete";
+        $class = "\\Zwei\\BriefDB\\Database\\Driver\\{$driver}\\Delete";
         return new $class($connection);
     }
 
@@ -30,11 +30,11 @@ class QueryFactor
      *
      * @param \Doctrine\DBAL\Connection $connection 数据库连接
      * @param string $driver 驱动名
-     * @return \Wei\BriefDB\Database\Driver\mysql\Insert
+     * @return \Zwei\BriefDB\Database\Driver\mysql\Insert
      */
     public static function getInsert(Connection $connection, $driver = '')
     {
-        $class = "\\Wei\\BriefDB\\Database\\Driver\\{$driver}\\Insert";
+        $class = "\\Zwei\\BriefDB\\Database\\Driver\\{$driver}\\Insert";
         return new $class($connection);
     }
 
@@ -43,11 +43,11 @@ class QueryFactor
      *
      * @param \Doctrine\DBAL\Connection $connection 数据库连接
      * @param string $driver 驱动名
-     * @return \Wei\BriefDB\Database\Driver\mysql\Update
+     * @return \Zwei\BriefDB\Database\Driver\mysql\Update
      */
     public static function getUpdate(Connection $connection, $driver = '')
     {
-        $class = "\\Wei\\BriefDB\\Database\\Driver\\{$driver}\\Update";
+        $class = "\\Zwei\\BriefDB\\Database\\Driver\\{$driver}\\Update";
         return new $class($connection);
     }
     /**
@@ -55,11 +55,11 @@ class QueryFactor
      *
      * @param \Doctrine\DBAL\Connection $connection 数据库连接
      * @param string $driver 驱动名
-     * @return \Wei\BriefDB\Database\Driver\mysql\Select
+     * @return \Zwei\BriefDB\Database\Driver\mysql\Select
      */
     public static function getSelect(Connection $connection, $driver = '')
     {
-        $class = "\\Wei\\BriefDB\\Database\\Driver\\{$driver}\\Select";
+        $class = "\\Zwei\\BriefDB\\Database\\Driver\\{$driver}\\Select";
         return new $class($connection);
     }
 }

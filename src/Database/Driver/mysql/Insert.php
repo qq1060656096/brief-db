@@ -1,16 +1,16 @@
 <?php
-namespace Wei\BriefDB\Database\Driver\mysql;
+namespace Zwei\BriefDB\Database\Driver\mysql;
 
 use Drupal\Core\Database\Database;
-use Wei\BriefDB\Common\ArrayLib;
-use Wei\BriefDB\Database\Query\Query;
+use Zwei\BriefDB\Common\ArrayLib;
+use Zwei\BriefDB\Database\Query\Query;
 
 /**
  * mysql 插入
  *
- * @package Wei\BriefDB\Database\Driver\mysql
+ * @package Zwei\BriefDB\Database\Driver\mysql
  */
-class Insert extends \Wei\BriefDB\Database\Query\Insert
+class Insert extends \Zwei\BriefDB\Database\Query\Insert
 {
 
 

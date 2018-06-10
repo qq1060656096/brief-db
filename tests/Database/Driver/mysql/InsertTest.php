@@ -1,9 +1,9 @@
 <?php
-namespace Wei\BriefDB\Tests\Database\Driver\mysql;
+namespace Zwei\BriefDB\Tests\Database\Driver\mysql;
 
-use Wei\BriefDB\Database\Driver\mysql\Insert;
-use Wei\BriefDB\Database\Query\ConnectionFactor;
-use Wei\BriefDB\Tests\WeiTestCase;
+use Zwei\BriefDB\Database\Driver\mysql\Insert;
+use Zwei\BriefDB\Database\Query\ConnectionFactor;
+use Zwei\BriefDB\Tests\WeiTestCase;
 
 class InsertTest extends WeiTestCase
 {

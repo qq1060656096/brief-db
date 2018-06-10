@@ -1,13 +1,13 @@
 <?php
-namespace Wei\BriefDB\Database\Query;
+namespace Zwei\BriefDB\Database\Query;
 
 use Doctrine\DBAL\Connection;
-use Wei\BriefDB\Exception\BaseException;
+use Zwei\BriefDB\Exception\BaseException;
 
 /**
  * 删除
  *
- * @package Wei\BriefDB\Database\Query
+ * @package Zwei\BriefDB\Database\Query
  */
 abstract class Delete extends Query
 {

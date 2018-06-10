@@ -1,9 +1,9 @@
 <?php
-namespace Wei\BriefDB\Common;
+namespace Zwei\BriefDB\Common;
 
 /**
  * Class String
- * @package Wei\BriefDB\Common
+ * @package Zwei\BriefDB\Common
  */
 class String
 {

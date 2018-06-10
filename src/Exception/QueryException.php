@@ -1,5 +1,5 @@
 <?php
-namespace Wei\BriefDB\Exception;
+namespace Zwei\BriefDB\Exception;
 
 
 use Throwable;

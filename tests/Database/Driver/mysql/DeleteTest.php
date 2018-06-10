@@ -1,10 +1,10 @@
 <?php
-namespace Wei\BriefDB\Tests\Database\Driver\mysql;
+namespace Zwei\BriefDB\Tests\Database\Driver\mysql;
 
 
-use Wei\BriefDB\Database\Query\ConnectionFactor;
-use Wei\BriefDB\Database\Driver\mysql\Delete;
-use Wei\BriefDB\Tests\WeiTestCase;
+use Zwei\BriefDB\Database\Query\ConnectionFactor;
+use Zwei\BriefDB\Database\Driver\mysql\Delete;
+use Zwei\BriefDB\Tests\WeiTestCase;
 
 class DeleteTest extends WeiTestCase
 {

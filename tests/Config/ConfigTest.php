@@ -1,11 +1,11 @@
 <?php
-namespace Wei\BriefDB\Tests\Config;
+namespace Zwei\BriefDB\Tests\Config;
 
 
-use Wei\BriefDB\Common\Composer;
-use Wei\BriefDB\Config\Config;
-use Wei\BriefDB\Exception\ConfigException;
-use Wei\BriefDB\Tests\WeiTestCase;
+use Zwei\BriefDB\Common\Composer;
+use Zwei\BriefDB\Config\Config;
+use Zwei\BriefDB\Exception\ConfigException;
+use Zwei\BriefDB\Tests\WeiTestCase;
 
 /**
  * 读取配置单元测试
@@ -42,7 +42,7 @@ class ConfigTest extends WeiTestCase
     /**
      * 测试配置项找不到
      *
-     * @expectedException \Wei\BriefDB\Exception\ConfigException
+     * @expectedException \Zwei\BriefDB\Exception\ConfigException
      * @expectedExceptionCode 41301
      */
     public function testThrowKeyNotFound()
@@ -51,7 +51,7 @@ class ConfigTest extends WeiTestCase
     }
     /**
      * 测试配置文件找不到
-     * @expectedException \Wei\BriefDB\Exception\ConfigException
+     * @expectedException \Zwei\BriefDB\Exception\ConfigException
      * @expectedExceptionCode 41302
      */
     public function testThrowFileNotFound()

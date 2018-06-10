@@ -1,9 +1,9 @@
 <?php
 
-namespace Wei\BriefDB\Database\Query;
+namespace Zwei\BriefDB\Database\Query;
 
 
-use Wei\BriefDB\Common\ArrayLib;
+use Zwei\BriefDB\Common\ArrayLib;
 use Doctrine\DBAL\Connection;
 
 /**

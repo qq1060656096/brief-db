@@ -1,15 +1,15 @@
 <?php
-namespace Wei\BriefDB\Database;
+namespace Zwei\BriefDB\Database;
 
-use Wei\BriefDB\Config\Config;
-use Wei\BriefDB\Database\Query\ConnectionFactor;
-use Wei\BriefDB\Database\Query\QueryFactor;
+use Zwei\BriefDB\Config\Config;
+use Zwei\BriefDB\Database\Query\ConnectionFactor;
+use Zwei\BriefDB\Database\Query\QueryFactor;
 
 
 /**
  * 数据库操作
  * Class Db
- * @package Wei\BriefDB\Database
+ * @package Zwei\BriefDB\Database
  */
 class Db
 {
@@ -61,7 +61,7 @@ class Db
 
     /**
      * 插入
-     * @return \Wei\BriefDB\Database\Query\Insert
+     * @return \Zwei\BriefDB\Database\Query\Insert
      */
     public static function getInsert()
     {
@@ -72,7 +72,7 @@ class Db
 
     /**
      * 删除
-     * @return \Wei\BriefDB\Database\Query\Delete
+     * @return \Zwei\BriefDB\Database\Query\Delete
      */
     public static function getDelete()
     {
@@ -84,7 +84,7 @@ class Db
     /**
      * 更新
      *
-     * @return \Wei\BriefDB\Database\Query\Update
+     * @return \Zwei\BriefDB\Database\Query\Update
      */
     public static function getUpdate()
     {
@@ -95,7 +95,7 @@ class Db
 
     /**
      * 查询
-     * @return \Wei\BriefDB\Database\Query\Select
+     * @return \Zwei\BriefDB\Database\Query\Select
      */
     public static function getSelect()
     {

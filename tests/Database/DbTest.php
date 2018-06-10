@@ -1,13 +1,13 @@
 <?php
-namespace Wei\BriefDB\Tests;
+namespace Zwei\BriefDB\Tests;
 
-use Wei\BriefDB\Database\Db;
+use Zwei\BriefDB\Database\Db;
 
 /**
  * 数据库测试
  *
  * Class DbTest
- * @package Wei\BriefDB\Tests
+ * @package Zwei\BriefDB\Tests
  */
 class DbTest extends WeiTestCase
 {

@@ -1,8 +1,8 @@
 <?php
-namespace Wei\BriefDB\Tests\Database\Query;
+namespace Zwei\BriefDB\Tests\Database\Query;
 
-use Wei\BriefDB\Database\Query\Condition;
-use Wei\BriefDB\Tests\WeiTestCase;
+use Zwei\BriefDB\Database\Query\Condition;
+use Zwei\BriefDB\Tests\WeiTestCase;
 
 class ConditionTest extends WeiTestCase
 {

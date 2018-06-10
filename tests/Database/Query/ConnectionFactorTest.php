@@ -1,20 +1,20 @@
 <?php
-namespace Wei\BriefDB\Tests\Database\Query;
+namespace Zwei\BriefDB\Tests\Database\Query;
 
-use Wei\BriefDB\Database\Driver\DriverName;
+use Zwei\BriefDB\Database\Driver\DriverName;
 
-use Wei\BriefDB\Database\Driver\mysql\Connection;
-use Wei\BriefDB\Database\Query\BatchUpdate;
-use Wei\BriefDB\Database\Query\Condition;
-use Wei\BriefDB\Database\Query\ConnectionFactor;
-use Wei\BriefDB\Database\Query\QueryFactor;
-use Wei\BriefDB\Tests\WeiTestCase;
+use Zwei\BriefDB\Database\Driver\mysql\Connection;
+use Zwei\BriefDB\Database\Query\BatchUpdate;
+use Zwei\BriefDB\Database\Query\Condition;
+use Zwei\BriefDB\Database\Query\ConnectionFactor;
+use Zwei\BriefDB\Database\Query\QueryFactor;
+use Zwei\BriefDB\Tests\WeiTestCase;
 
 /**
  * 测试连接工厂类
  *
  * Class ConnectionFactorTest
- * @package Wei\BriefDB\Tests\Database\Query
+ * @package Zwei\BriefDB\Tests\Database\Query
  */
 class ConnectionFactorTest extends WeiTestCase
 {
@@ -67,16 +67,16 @@ class ConnectionFactorTest extends WeiTestCase
     public function testDataBaseOperationInstance()
     {
         $mysqlDelete = QueryFactor::getDelete(ConnectionFactor::getInstance(), DriverName::MYSQL);
-        $this->assertEquals(get_class($mysqlDelete), 'Wei\BriefDB\Database\Driver\mysql\Delete');
+        $this->assertEquals(get_class($mysqlDelete), 'Zwei\BriefDB\Database\Driver\mysql\Delete');
 
         $mysqlInsert = QueryFactor::getInsert(ConnectionFactor::getInstance(), DriverName::MYSQL);
-        $this->assertEquals(get_class($mysqlInsert), 'Wei\BriefDB\Database\Driver\mysql\Insert');
+        $this->assertEquals(get_class($mysqlInsert), 'Zwei\BriefDB\Database\Driver\mysql\Insert');
 
         $mysqlUpdate = QueryFactor::getUpdate(ConnectionFactor::getInstance(), DriverName::MYSQL);
-        $this->assertEquals(get_class($mysqlUpdate), 'Wei\BriefDB\Database\Driver\mysql\Update');
+        $this->assertEquals(get_class($mysqlUpdate), 'Zwei\BriefDB\Database\Driver\mysql\Update');
 
         $mysqlSelect = QueryFactor::getSelect(ConnectionFactor::getInstance(), DriverName::MYSQL);
-        $this->assertEquals(get_class($mysqlSelect), 'Wei\BriefDB\Database\Driver\mysql\Select');
+        $this->assertEquals(get_class($mysqlSelect), 'Zwei\BriefDB\Database\Driver\mysql\Select');
     }
 
     public function test()

@@ -1,13 +1,13 @@
 <?php
-namespace Wei\BriefDB\Database\Query;
+namespace Zwei\BriefDB\Database\Query;
 
-use Wei\BriefDB\Common\ArrayLib;
+use Zwei\BriefDB\Common\ArrayLib;
 
 /**
  * 条件抽象类
  *
  * Class ConditionAbstract
- * @package Wei\BriefDB\DB
+ * @package Zwei\BriefDB\DB
  */
 abstract class ConditionAbstract implements \Countable
 {

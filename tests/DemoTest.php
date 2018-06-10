@@ -1,5 +1,5 @@
 <?php
-namespace Wei\BriefDB\Tests;
+namespace Zwei\BriefDB\Tests;
 
 class DemoTest extends WeiTestCase{
     public function testHell(){

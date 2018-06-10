@@ -1,10 +1,10 @@
 <?php
 
-namespace Wei\BriefDB\Common;
+namespace Zwei\BriefDB\Common;
 
 /**
  * Class Number
- * @package Wei\BriefDB\Common
+ * @package Zwei\BriefDB\Common
  */
 class Number
 {
