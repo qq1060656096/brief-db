@@ -13,15 +13,9 @@
 
 ```php
 {
- "repositories": [
-   {
-     "type": "vcs",
-     "url": "https://github.com/qq1060656096/brief-db.git"
-   }
- ],
- "require": {
- "wei/brief-db": "1.0.0"
- }
+    "require": {
+        "zwei/brief-db": "~2"
+    }
 }
 ```
 > 3. 执行composer install
