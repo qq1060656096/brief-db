@@ -139,8 +139,8 @@ class ConnectionFactor
         } else {
             return null;
         }
-
-        if (empty($connectionData->getLogger())) {
+        
+        if (!$connectionData->getLogger()) {
             $connectionData->setLogger(new \Doctrine\DBAL\Logging\DebugStack());
         }
     }
