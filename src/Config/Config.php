@@ -1,7 +1,7 @@
 <?php
 namespace Zwei\BriefDB\Config;
 
-use function Composer\Autoload\includeFile;
+use Composer\Autoload\includeFile;
 use Zwei\BriefDB\Common\Composer;
 use Zwei\BriefDB\Exception\ConfigException;
 
