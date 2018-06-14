@@ -1,7 +1,6 @@
 <?php
 namespace Wei\BriefDB\Common;
 
-use Composer\Autoload\ClassLoader;
 
 /**
  * composer常用方法
@@ -18,7 +17,7 @@ class Composer
     public static function getComposerVendorDir()
     {
         try {
-            $class          = new \ReflectionClass(ClassLoader::class);
+            $class          = new \ReflectionClass("\\Composer\\Autoload\\ClassLoader");
             $file_name      = $class->getFileName();
             $vendor_dir     = dirname(dirname(dirname($file_name)));
         } catch (\Exception $e){

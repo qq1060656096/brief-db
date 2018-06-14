@@ -1,9 +1,9 @@
 <?php
 namespace Wei\BriefDB\Config;
 
-use function Composer\Autoload\includeFile;
-use Wei\BriefDB\Common\Composer;
-use Wei\BriefDB\Exception\ConfigException;
+use Composer\Autoload\includeFile;
+use wei\BriefDB\Common\Composer;
+use wei\BriefDB\Exception\ConfigException;
 
 /**
  * 读取配置

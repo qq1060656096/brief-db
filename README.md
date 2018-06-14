@@ -176,6 +176,11 @@ $count = Db::getSelect()->from('test')
 $rawSql = Db::getLastRawSql();
 // 打印sql日志
 print_r($rawSql);
+
+// doctrine2原生sql执行
+$sql = "SELECT count(*) FROM test";
+Db::getConnection()->fetchColumn($sql);
+Db::getConnection()->fetchAll($sql);
 ```
 
 ## 4. 获取配置文件
